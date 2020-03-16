@@ -17,9 +17,8 @@
 <body>
     <div class="login-page">
         <div class="form">
-            <form class="form-group" action="/cust_reg" method="POST">
-                <h5>Online Renting System</h5>
-                <h6>Create account</h6>
+            <form class="form-group" action="/owner_reg" method="POST">
+                <h6>Create an owners account</h6>
                 <div class="form-group">
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
@@ -34,10 +33,10 @@
                 <input type="text" placeholder="Full name" name="name" required />
                 <input type="email" placeholder="Email" name="email" required />
                 <input type="number" placeholder="Phone number" name="phone" required />
-                <input type="password" placeholder="password" name="password" required>
-                <input type="password" placeholder="confirm password" name="confirmpass" required>
+                <input type="password" placeholder="password" name="password" required />
+                <input type="password" placeholder="confirm password" name="confirmpass" reguired />
                 <button type="submit">create</button>
-                <p class="message">Already registered? <a href="/login">Sign In</a></p>
+                <p class="message">Already registered? <a href="/owner/login">Sign In</a></p>
             </form>
         </div>
     </div>

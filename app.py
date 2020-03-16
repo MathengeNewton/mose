@@ -1,364 +1,446 @@
-from flask import Flask, render_template, url_for, session, redirect, jsonify, request
-from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, PasswordField, DateField, BooleanField, TextAreaField, FileField, RadioField
-from wtforms.fields.html5 import DateField
-from wtforms.validators import InputRequired, Email, length
+from flask import Flask, render_template, url_for, session, redirect, jsonify, request,flash
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
-from flask_marshmallow import Marshmallow, Schema
-import json
+from PIL import Image
+from flask_bcrypt import Bcrypt 
+import time
 import os
 
+app= Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:mathenge,./1998@localhost/mainapp'
+app.config['SECRET_KEY'] = 'some=secret+key'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db= SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+UPLOAD_FOLDER = os.getcwd() + '/static/uploads/images'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
-app = Flask(__name__)
-app.config.from_pyfile('config.py')
-db = SQLAlchemy(app)
-marsh = Marshmallow(app)
-
-# create owner-rental schema
-
-
-class ownerrenntalSchema(marsh.Schema):
-    class Meta:
-        fields = ('owner', 'rental')
-
-
-class imageurl(marsh.Schema):
-    class Meta:
-        fields = ('rental', 'image_url')
-
-
-class rentalfeatures(marsh.Schema):
-    class Meta:
-        fields = ('location', 'description', 'price',
-                  'bedrooms', 'bathrooms', 'size', 'type')
-# init schema
-
-
-# rental detail schema
-rentalfeature = rentalfeatures()
-rentalsfeature = rentalfeatures(many=True)
-
-# imageurl schema
-image_url = imageurl()
-image_urls = imageurl(many=True)
-
-# rentalowner schema
-ownerrental_schema = ownerrenntalSchema()
-ownerrental_schemas = ownerrenntalSchema(many=True)
-
-# database models
-
-
-class users(db.Model):
+#db models 
+# customer db model class
+class customers(db.Model):
     id = db.Column(db.Integer, nullable=False,
                    primary_key=True, autoincrement=True)
-    username = db.Column(db.String(15), nullable=False)
+    name = db.Column(db.String(15), nullable=False)
     email = db.Column(db.String(20), nullable=False, unique=True)
-    clearance = db.Column(db.String(20), nullable=False)
+    phone_number = db.Column(db.String(30), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
-    bookings = db.relationship('bookings', backref='users',
-                               lazy=True, primaryjoin="users.id == bookings.user_id")
-    profiles = db.relationship(
-        'profiles', backref='users', lazy=True, primaryjoin="users.id == profiles.user")
-    contacts = db.relationship(
-        'contacts', backref='users', lazy=True, primaryjoin="users.id == contacts.user")
-    rentals = db.relationship('rentalowner', backref='users',
-                              lazy=True, primaryjoin="users.id == rentalowner.owner")
+
+    # insert new user class
+
+    def insert_record(self):
+        db.session.add(self)
+        db.session.commit()
+
+    # check if email is in use
+    @classmethod
+    def check_email_exist(cls, email):
+        customer = cls.query.filter_by(email=email).first()
+        if customer:
+            return True
+        else:
+            return False
+
+    # validate password
+    @classmethod
+    def validate_password(cls, email, password):
+        customer = cls.query.filter_by(email=email).first()
+
+        if customer and bcrypt.check_password_hash(customer.password, password):
+            return True
+        else:
+            return False
+
+    # get customer id
+    @classmethod
+    def get_customer_id(cls, email):
+        return cls.query.filter_by(email=email).first().id
+
+# db owner relation class
 
 
-class bookings(db.Model):
+class owners(db.Model):
     id = db.Column(db.Integer, nullable=False,
                    primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    rental_id = db.Column(db.Integer, db.ForeignKey(
-        'rentals.id'), nullable=False)
+    name = db.Column(db.String(15), nullable=False)
+    email = db.Column(db.String(20), nullable=False, unique=True)
+    phone_number = db.Column(db.String(30), nullable=False, unique=True)
+    password = db.Column(db.String(80), nullable=False)
+
+    # insert new user class
+
+    def insert_record(self):
+        db.session.add(self)
+        db.session.commit()
+
+    # check if email is in use
+    @classmethod
+    def check_email_exist(cls, email):
+        owners = cls.query.filter_by(email=email).first()
+        if owners:
+            return True
+        else:
+            return False
+
+    # validate password
+    @classmethod
+    def validate_password(cls, email, password):
+        owners = cls.query.filter_by(email=email).first()
+
+        if owners and bcrypt.check_password_hash(owners.password, password):
+            return True
+        else:
+            return False
+
+    # get customer id
+    @classmethod
+    def get_owners_id(cls, email):
+        return cls.query.filter_by(email=email).first().id
+
+
 
 
 class rentals(db.Model):
     id = db.Column(db.Integer, nullable=False,
                    primary_key=True, autoincrement=True)
-    location = db.Column(db.String(100), nullable=False)
-    type = db.Column(db.String(100))
-    bathrooms = db.Column(db.Integer)
-    bedrooms = db.Column(db.Integer)
-    size = db.Column(db.Integer)
+    img = db.Column(db.String(), nullable=False)
+    location = db.Column(db.String(100), nullable=False)    
     description = db.Column(db.String(1000), nullable=False)
     price = db.Column(db.Integer, nullable=False)
-    bookings = db.relationship('bookings', backref='rentals',
-                               lazy=True, primaryjoin="rentals.id == bookings.rental_id")
-    rentals = db.relationship('rentalowner', backref='rentals',
-                              lazy=True, primaryjoin="rentals.id == rentalowner.rental")
-    images = db.relationship('images', backref='rentals',
-                             lazy=True, primaryjoin='rentals.id == images.rental')
+    # 0-occupied -1 vacant
+    status = db.Column(db.String(), nullable=False, default='1')
 
+    # insert rental
 
-class rentalowner (db.Model):
-    id = db.Column(db.Integer, nullable=False,
-                   autoincrement=True, primary_key=True)
-    owner = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    rental = db.Column(db.Integer, db.ForeignKey('rentals.id'), nullable=False)
-
-
-class images(db.Model):
-    id = db.Column(db.Integer, nullable=False,
-                   primary_key=True, autoincrement=True)
-    rental = db.Column(db.Integer, db.ForeignKey(
-        'rentals.id'), nullable=False)
-    image_url = db.Column(db.String)
-
-
-class profiles(db.Model):
-    id = db.Column(db.Integer, nullable=False,
-                   primary_key=True, autoincrement=True)
-    user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    profile = db.Column(db.LargeBinary)
-
-
-class contacts(db.Model):
-    id = db.Column(db.Integer, nullable=False,
-                   autoincrement=True, primary_key=True)
-    user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    phone = db.Column(db.Integer, nullable=False)
-    pAdress = db.Column(db.Integer)
-
-# form models
-
-
-class reg(FlaskForm):
-    username = StringField('username', validators=[
-        InputRequired(), length(min=6, max=20)])
-    email = StringField('email', validators=[
-                        InputRequired(), length(min=10, max=20)])
-    password = PasswordField('password', validators=[
-                             InputRequired(), length(min=8, max=80)])
-    password2 = PasswordField('password2', validators=[
-        InputRequired(), length(min=8, max=80)])
-
-
-class changeacc(FlaskForm):
-    email = StringField('email', nullable=False)
-
-
-class Login(FlaskForm):
-    email = StringField('email', validators=[
-        InputRequired(), length(min=10, max=20)])
-    password = PasswordField('password', validators=[
-                             InputRequired(), length(min=8, max=80)])
-
-
-class reservehouse(FlaskForm):
-    name = StringField('name', validators=[
-                       InputRequired(), length(min=6, max=30)])
-    occupants = IntegerField('occupants')
-    phone = IntegerField('phone', validators=[
-        InputRequired(), length(min=10, max=20)])
-    email = StringField('email')
-    passport = IntegerField('passport')
-    date = DateField('date')
-
-
-class spaceupload(FlaskForm):
-    location = StringField('location', validators=[InputRequired()])
-    price = IntegerField('price', validators=[InputRequired()])
-    description = TextAreaField('description', validators=[
-        InputRequired(), length(min=200, max=2000)])
-    type = RadioField('housetype', choices=[(
-        'bungallow', 'bungallow'), ('mansionete', 'mansionete'), ('appartment', 'appartment')])
-    bedrooms = IntegerField('bedrooms')
-    bathrooms = IntegerField('bathrooms')
-    size = IntegerField('squarefeet')
-    images = FileField('images')
-# file checker
-
-
-def allowed_image(filename):
-    if not '.' in filename:
-        return False
-    ext = filename.rsplit('.', 1)[1]
-    if ext.upper() in app.config['ALLOWED_IMAGE_EXTENSIONS']:
-        return True
-    else:
-        return False
-
- # start page loader
-
-
-@app.route('/')
-def main():
-    return render_template('dash.html')
-
-# house ownner page loader
-@app.route('/admin', methods=['POST', 'GET'])
-def admin():
-    if "user" in session:
-        id = session['id']
-        rental = rentalowner.query.filter_by(owner=id).all()
-        allrental = ownerrental_schemas.dumps(rental)
-        allrentals = ownerrental_schemas.jsonify(allrental)
-        newobjects = json.loads(allrental)
-        for objects in newobjects:
-            rentalsobjects = objects['rental']
-            rentaldesc = rentals.query.filter_by(id=rentalsobjects).all()
-            rentaldescript = rentalsfeature.dumps(rentaldesc)
-            print(rentaldescript)
-            # imageurl = images.query.filter_by(rental=rentals).all()
-            # myimageurls = image_urls.dumps(imageurl)
-            # realurl = image_urls.jsonify(myimageurls)
-            # print(myimageurls)
-        return render_template('landlord.html')
-    else:
-        return render_template('index.html')
-
-# property page expounder route. pulls property from database and displays
-@app.route('/property', methods=['GET', 'POST'])
-def property():
-    if "user" in session:
-        return render_template('property.html')
-    else:
-        return render_template('index.html')
-
-# landlord views status of their available rentals
-@app.route('/rentalstatus', methods=['GET', 'POST'])
-def rentalstatus():
-    if "user" in session:
-        return render_template('rentalstatus.html')
-    else:
-        return render_template('index.html')
-
-# customer booking page is displayed
-@app.route('/bookspace', methods=['GET', 'POST'])
-def book():
-    if "user" in session:
-        form = reservehouse()
-        user = session['user']
-        return render_template('book.html', user=user, form=form)
-    else:
-        return render_template('index.html')
-
-# booking by customer is processed and either approved or denied
-@app.route('/reserve', methods=['POST', 'GET'])
-def reserve():
-    if "user" in session:
-        form = book()
-        userID = session['id']
-        rentalID = session['rentalID']
-        booking = booking(user_id=userID, rental_id=rentalID)
-        db.session.add(booking)
+    def insert_record(self):
+        db.session.add(self)
         db.session.commit()
-        return render_template('checkout.html')
-    else:
-        return render_template('index.html')
 
+    # fetch all rentals
+    @classmethod
+    def fetch_all(cls):
+        return cls.query.all()
+
+    # fetch where status is 1
+    @classmethod
+    def fetch_by_status_occupied(cls):
+        return cls.query.filter_by(status=u'1')
+
+    # update status
+        # update rental
+    @classmethod
+    def update_rental_by_id(cls, id, status=None):
+        rental = cls.query.filter_by(id=id).first()
+
+        if rental:
+            if status:
+                rental.status = status
+            db.session.commit()
+            return True
+        else:
+            return False
+
+    # delete rental by id
+    @classmethod
+    def delete_by_id(cls, id):
+        rental = cls.query.filter_by(id=id)
+        if rental.first():
+            rental.delete()
+            db.session.commit()
+            return True
+        else:
+            return False
+
+
+class bookings(db.Model):
+    id = db.Column(db.Integer, nullable=False,
+                   primary_key=True, autoincrement=True)    
+    rental_id = db.Column(db.Integer)
+    movein_date = db.Column(db.Date)
+    customer_email = db.Column(db.String)
+
+ # create
+
+    def insert_record(self):
+        db.session.add(self)
+        db.session.commit()
+
+    # fetch all
+    @classmethod
+    def fetch_all(cls):
+        return cls.query.all()
+
+#  function that check if an extension is valid, uploads a file and redirect user to url for image
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def upload_file(imageFile):
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in imageFile:
+            print('No file part')
+            return None
+
+        file = imageFile['file']
+
+        # if user does not select file, browser also submits an empty part without filename
+        if file.filename == '':
+            return None
+        if file and allowed_file(file.filename):
+            img = Image.open(file)
+            new_width = 150
+            new_height = 150
+            size = (new_height, new_width)
+            img = img.resize(size)
+            stamped = int(time.time())
+            print('all good')
+            img.save(os.path.join(UPLOAD_FOLDER, str(stamped) + file.filename))
+            print(os.path.join(UPLOAD_FOLDER, str(stamped) + file.filename))
+            return '/static/uploads/images/' + str(stamped) + file.filename
+        else:
+            return None
+
+#customer landing page
+@app.route('/main')
+def main():
+    if 'custemail' in session:
+        allrentals = rentals.fetch_by_status_occupied()
+        return render_template('dash.html',allrentals = allrentals)
+    else: 
+        return redirect(url_for('login'))
 
 # log in page is initiated here
-@app.route('/start', methods=['GET', 'POST'])
+@app.route('/')
 def start():
-    form = Login()
-    return render_template('index.html', form=form)
+    return render_template('index.html')
 
-#login is processed
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = Login()
-    account = users.query.filter_by(email=form.email.data).first()
-    if account:
-        checkpass = check_password_hash(account.password, form.password.data)
-        if checkpass:
-            clearance = account.clearance
-            session['user'] = account.username
-            session['id'] = account.id
-            name = session['user']
-            if clearance == "admin":
-                return render_template(url_for('admin'))
-            elif clearance == 'user':
-                return redirect(url_for('homepage'))
+#owner register and login
+@app.route('/owner/register')
+def owner_register():
+    return render_template('adminreg.html')
+#owner registration occurs
+@app.route('/owner_reg',methods=['POST','GET'])
+def owner_reg ():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        phone = request.form['phone']
+        password = request.form['password']
+        confirmpass = request.form['confirmpass']
 
-            return redirect(url_for('systemadmin'))
+        if password != confirmpass:
+            flash('Passwords dont match','danger')
+            return redirect(url_for('owner_register'))
+        elif(owners.check_email_exist(email)):
+            flash('Email already in use','danger')
+            return redirect(url_for('owner_register'))
         else:
-            return '<h1>Invalid user or password</h1>'
-    else:
-        return render_template('index.html', form=form)
+            hashpassword = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    return redirect(url_for('login'))
+            y = owners(name=name,email=email,phone_number=phone,password=hashpassword)
+            y.insert_record()
 
-# register new user page is initiated
-@app.route('/registration', methods=['POST', 'GET'])
-def registration():
-    form = reg()
-    return render_template('register.html', form=form)
+            flash('Account successfully created','success')
+            return redirect(url_for('owner_login'))
 
-# register new user is processed
-@app.route('/register', methods=['POST', 'GET'])
-def register():
-    form = reg()
-    if form.password.data == form.password2.data:
-        hashed_password = generate_password_hash(
-            form.password.data, method='sha256')
-        accounttype = form.accounttype.data
-        new_user = users(username=form.username.data,
-                         email=form.email.data, clearance="user", password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        return render_template('index.html', form=form)
-    else:
-        return render_template('register.html', errors='passwords dont match', form=form)
+    return redirect(url_for('owner_register'))
 
-    return redirect('/registration')
+#owner login
+@app.route('/owner/login')
+def owner_login():
+    return render_template('adminlogin.html')
 
+@app.route('/owner/log_in', methods=['GET','POST'])
+def owners_login():
+    if request.method == 'POST':
+        # try:
+        email = request.form['email']
+        password = request.form['password']
 
-# landlord upload page is loaded here
-@app.route('/newrental', methods=['POST', 'GET'])
-def newrental():
-    if "user" in session:
-        form = spaceupload()
-        return render_template('uploadspace.html', form=form)
-    else:
-        return render_template('index.html')
-
-
-# landlord upload new rental is processed here
-@app.route('/upload', methods=['POST', 'GET'])
-def upload():
-    form = spaceupload()
-    if "user" in session:
-        if request.method == 'POST' and 'images' in request.files:
-            #         # commit to table rentals
-            new_rental = rentals(
-                location=form.location.data, description=form.description.data, price=form.price.data,
-                bedrooms=form.bedrooms.data, bathrooms=form.bathrooms.data, size=form.size.data,
-                type=form.type.data)
-            db.session.add(new_rental)
-            db.session.commit()
-            id = new_rental.id
-            #         # commit to relationship table
-            owner_id = session['id']
-            newrelation = rentalowner(owner=owner_id, rental=id)
-            db.session.add(newrelation)
-            db.session.commit()
-            # commit image url to db and image to the directorate
-            image = request.files['images']
-            filename = secure_filename(image.filename)
-            accepted = allowed_image(filename)
-            if accepted == True:
-                image.save(os.path.join(
-                    app.config['UPLOADED_IMAGE_DEST'], filename))
-                image_url = app.config['UPLOADED_IMAGE_DEST'] + filename
-                new_image = images(rental=id, image_url=image_url)
-                db.session.add(new_image)
-                db.session.commit()
+        # check if email exist
+        if owners.check_email_exist(email):
+            if owners.validate_password(email=email,password=password):
+                session['email'] = email
+                session['uid'] = owners.get_owners_id(email)
                 return redirect(url_for('admin'))
             else:
-                return redirect(request.url)
-
+                flash('Invalid login credentials','danger')
+                return redirect(url_for('owner_login'))
         else:
-            error = "The details were not correct.Please try again"
-            return render_template('uploadspace.html', errormessage=error, form=spaceupload())
-    else:
-        return render_template('index.html')
+            flash('Invalid login credentials', 'danger')
+            return redirect(url_for('owner_login'))
+    # except Exception as e:
+        # print(e)    
+    return render_template('owner_login.html')
+#customer registration render page
+@app.route('/registration')
+def registration():
+    return render_template('register.html')
 
+#customer registration
+@app.route('/cust_reg',methods=['POST','GET'])
+def cust_reg():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        phone = request.form['phone']
+        password = request.form['password']
+        confirmpass = request.form['confirmpass']
+
+        if password != confirmpass:
+            flash('Passwords dont match','danger')
+            return redirect(url_for('registration'))
+        elif(customers.check_email_exist(email)):
+            flash('Email already in use','danger')
+            return redirect(url_for('regisration'))
+        else:
+            hashpassword = bcrypt.generate_password_hash(password).decode('utf-8')
+
+            y = customers(name=name,email=email,phone_number=phone,password=hashpassword)
+            y.insert_record()
+
+            flash('Account successfully created','success')
+            return redirect(url_for('login'))
+
+    return redirect(url_for('registrtion'))
+
+    return redirect(url_for('registration'))
+
+#customer login render template
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+
+@app.route('/tenant/login', methods=['GET','POST'])
+def tenant_login():
+    if request.method == 'POST':
+        # try:
+        email = request.form['email']
+        password = request.form['password']
+
+        # check if email exist
+        if customers.check_email_exist(email):
+            if customers.validate_password(email=email,password=password):
+                session['custemail'] = email
+                session['custid'] = customers.get_customer_id(email)
+                return redirect(url_for('main'))
+            else:
+                flash('Invalid login credentials','danger')
+                return redirect(url_for('login'))
+        else:
+            flash('Invalid login credentials', 'danger')
+            return redirect(url_for('login'))
+    # except Exception as e:
+        # print(e)
+    
+    return render_template('login.html')
+
+# start page loader
+@app.route('/admin')
+def admin():
+    if 'email' in session:
+        return render_template('admindash.html')
+    else:
+        return redirect('/owner/login')
+
+# check booked rentals
+@app.route('/rentals/status', methods=['POST', 'GET'])
+def rental_status():
+    if 'email' in session:
+        allr = bookings.fetch_all()
+        return render_template('rentalstatus.html',allr = allr)
+    else:
+        return redirect(url_for('owner_login'))
+
+# view rentals
+@app.route('/rentals/all', methods=['GET','POST'])
+def rentals_all():
+    if 'email' in session:
+        allr = rentals.fetch_all()
+        return render_template('allrentals.html', allr = allr)
+    else:
+        return redirect(url_for('owner_login'))
+
+#landlord upload new rental is processed here
+@app.route('/home', methods=['GET', 'POST'])
+def upload_rental():
+    if 'email' in session:
+        if request.method == 'POST':
+            print(session['email'])
+            image_url = upload_file(request.files)
+            location = request.form['location']
+            description = request.form['description']
+            price = request.form['price']
+            x = rentals(img=image_url, location=location,
+                            description=description, price=price)
+            x.insert_record()
+
+            print('record successfully added')
+
+            return render_template('admindash.html')
+    else:
+        return redirect(url_for('owner_login'))
+
+    return render_template('admindash.html')
+
+#rental booking
+@app.route('/rentals/book', methods=['GET','POST'])
+def bid():
+    if 'email' in session:
+        if request.method == 'POST':
+            rental_id = request.form['id']
+            email = session['email']
+            mdate = request.form['date']
+
+            b = bookings(rental_id=rental_id,customer_email=email,movein_date=mdate)
+            b.insert_record()
+            print('booking successfull')
+
+            return redirect(url_for('main'))
+        
+
+    else:
+        return redirect(url_for('login'))
+
+# update product status
+@app.route('/status/update/<int:id>', methods=['GET','POST'])
+def update_status(id):
+    if request.method == 'POST':
+        newStatus = request.form['newstatus']        
+        up = rentals.update_rental_by_id(id=id,status=newStatus)
+
+        if up:
+            flash('update successful','success')
+            return redirect(url_for('rentals_all'))
+        else:
+            flash('record not found','danger')
+            return redirect(url_for('rentals_all'))
+
+#delete a product
+@app.route('/delete/<int:id>', methods=['POST']) 
+def delete(id):
+    deleted = rentals.delete_by_id(id)
+    if deleted:
+        flash("Deleted Succesfully",'success')
+        return redirect(url_for('rentals_all'))
+    else:
+        flash("Record not found",'danger')
+        return redirect(url_for('rentals_all'))
+
+@app.route('/owner/logout', methods=['POST'])
+def logout_owner():
+    session.clear()
+    return redirect(url_for('admin'))
+
+
+@app.route('/customer/logout', methods=['POST'])
+def logout_customer():
+    session.clear()
+    return redirect(url_for('main'))
 
 # debug mode
 if __name__ == "__main__":
-    app.run()
+    app.run( debug=True)

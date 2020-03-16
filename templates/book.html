@@ -20,22 +20,20 @@
     </div>
     <div class="reserve">
         <div class="myform">
-            <h3>reserve a space</h3>
+            <h3>reserve space</h3>
             <h5>highlighted fields must be filled</h5>
             <form action="/reserve" method="post">
                 <label for="name"><a>*</a>full names :</label>
-                {{form.name}}<br>
+                <input type="text" name="name"><br>
                 <label for="famsize">number of expected occupants:</label>
-                {{form.occupants}}<br />
+                <input type="text" name="occupants"><br>
                 <label for="Phone"><a>*</a>phone number:</label>
-                {{form.phone}}<br />
+                <input type="number" name="phone_number">
                 <label for="email"><a>*</a>email:</label>
-                {{form.email}}<br />
-                <label for="email"><a>*</a>passport:</label>
-                {{form.passport}}<br />
+                <input type="text" name="email"><br>
                 <label for="name"><a>*</a>expected movein date date:</label>
-                {{form.date}}<br />
-                <input type="submit" value="reserve" />
+                <input type="date" name="date"><br>
+                <button type="submit">reserve</button>
             </form>
         </div>
     </div>

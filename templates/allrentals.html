@@ -1,3 +1,20 @@
+<!--
+=========================================================
+ Paper Dashboard 2 - v2.0.0
+=========================================================
+
+ Product Page: https://www.creative-tim.com/product/paper-dashboard-2
+ Copyright 2019 Creative Tim (https://www.creative-tim.com)
+ Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard/blob/master/LICENSE)
+
+ Coded by Creative Tim
+
+=========================================================
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,7 +24,7 @@
     <link rel="icon" type="image/png" href="../static/assets/img/favicon.png">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <title>
-        Online renting system
+        Online renting System
     </title>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'
         name='viewport' />
@@ -18,7 +35,7 @@
     <link href="../static/css/bootstrap.min.css" rel="stylesheet" />
     <link href="../static/css/paper-dashboard.css?v=2.0.0" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href=" {{url_for('static',filename='css/demo.css')}}" rel="stylesheet" />
+    <link href="../static/css/demo.css" rel="stylesheet" />
     <!-- bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -53,25 +70,24 @@
                             <p>Dashboard</p>
                         </a>
                     </li>
-                    <li class="active ">
-                        <a href="/home">
+                    <li class="">
+                        <a href="/admin">
                             <i class="fas fa-align-center"></i>
-                            <p>Upload rental</p>
+                            <p>Upload rentals</p>
                         </a>
                     </li>
-                    <li class="">
+                    <li class="active">
                         <a href="/rentals/all">
-                            <i class="fas fa-align-center"></i>
+                            <i class="fas fa-users"></i>
                             <p>my rentals</p>
                         </a>
                     </li>
                     <li class="">
                         <a href="/rentals/status">
-                            <i class="fas fa-align-center"></i>
+                            <i class="fas fa-users"></i>
                             <p>Booked rentals</p>
                         </a>
                     </li>
-
 
                 </ul>
             </div>
@@ -115,10 +131,11 @@
 </div> -->
             <div class="content">
                 <div class="row">
-                    <div class="col-md-12 ">
-                        <div class="card card-default">
-                            <div class="card-header text-center">
-                                <h5 class="card-title font-weight-bold">UPLOAD A RENTAL</h5>
+                    <div class="col-md-12">
+                        <div class="card demo-icons">
+                            <div class="card-header">
+                                <h5 class="card-title">rentals</h5>
+
                                 <div class="form-group">
                                     {% with messages = get_flashed_messages(with_categories=true) %}
                                     {% if messages %}
@@ -134,58 +151,113 @@
                                     {% endwith %}
                                 </div>
                             </div>
+                            <div class="card-body all-icons">
+                                <div id="icons-wrapper">
+                                    <div class="table-responsive">
+                                        <table class="table" id="myTable">
+                                            <thead class="text-primary">
+                                                <th>rental ID</th>
+                                                <th>location</th>
+                                                <th>Breif description</th>
+                                                <th>price</th>
+                                                <th>Status</th>
+                                                <th>Update status</th>
+                                                <th>Delete rental</th>
+                                            </thead>
+                                            <tbody>
+                                                {% for each in allr %}
+                                                <tr>
+                                                    <td>{{ each.id }}</td>
+                                                    <td>{{ each.location }}</td>
+                                                    <td>{{ each.description }}</td>
+                                                    <td>{{ each.price }}</td>
+                                                    <td>{{ each.status }}</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-warning" data-toggle="modal"
+                                                            data-target="#update{{ each.id }}">update </button>
 
-                            <div class="card-body">
-                                <div class="container">
-                                    <div class="row justify-content-center">
-                                        <div class="col-md-8">
-                                            <div class="">
-                                                <form action="/home" method="POST" enctype="multipart/form-data"
-                                                    class="shadow-md">
-                                                    <div class="col-10">
-                                                        <label class="text-monospace text-danger" for="file">
-                                                            Image *</label>
-                                                        <input id="file" name="file" type="file"
-                                                            class="form-control border">
-                                                    </div>
-                                                    <div class="form-group col-10">
-                                                        <label class="text-monospace text-danger"
-                                                            for="location">LOCATION
-                                                            *</label>
-                                                        <input required id="pname" name="location"
-                                                            class="form-control border" type="text">
-                                                    </div>
-                                                    <div class="form-group col-10">
-                                                        <label class="text-monospace text-danger" for="description">
-                                                            Description *</label>
-                                                        <textarea required id="description" name="description"
-                                                            class="form-control border" cols="30" rows="5"></textarea>
-                                                    </div>
-                                                    <div class="form-group col-10">
-                                                        <label for="bid" class="text-monospace text-danger">PRICE
-                                                            *</label>
-                                                        <input required id="bid" name="price" type="text"
-                                                            class="form-control border">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <button type="submit"
-                                                            class="btn btn-outline-success">Submit</button>
-                                                    </div>
+                                                        <!-- add new product modal -->
+                                                        <div class="modal fade" id="update{{ each.id }}" tabindex="-1"
+                                                            role="dialog" aria-labelledby="exampleModalLabel"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="exampleModalLabel">
+                                                                            Update price</h5>
+                                                                        <button type="button" class="close"
+                                                                            data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <form action="/status/update/{{ each.id }}"
+                                                                            method="POST">
 
-                                                </form>
-                                            </div>
-                                        </div>
+                                                                            <div class="form-group">
+                                                                                <label for="newstatus">Status</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    name="newstatus">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <button type="submit"
+                                                                                    class="btn btn-success btn-md">Submit</button>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <form action="/delete/{{ each.id }}" method="POST">
+                                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                    {% endfor %}
+                                            </tbody>
+
+                                        </table>
                                     </div>
+
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- add new product modal -->
+            <div class="modal fade" id="addProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">New rental</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/products" method="POST">
+                                <div class="form-group">
+                                    <label for="">Location</label>
+                                    <input type="text" class="form-control" placeholder="juice" name="product" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Price</label>
+                                    <input type="text" class="form-control" placeholder="500" name="price" required>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-success">Submit</button>
+                                </div>
+                            </form>
+                        </div>
 
+                    </div>
+                </div>
+            </div>
 
 
 
