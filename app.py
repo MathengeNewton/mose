@@ -226,10 +226,10 @@ class wallet(db.Model):
         return cls.query.filter_by(owner=id).first().amount
 # update wallet
     @classmethod
-    def update(cls, id, newentry):
-        pid = cls.query.filter_by(owner=id)
-        if pid.first():
-            pid.amount = newentry
+    def update_wallet_by_id(cls, id, newentry):
+        ownerid = cls.query.filter_by(owner=id).first()
+        if ownerid:
+            ownerid.amount = newentry
             db.session.commit()
             return True
         return False
@@ -401,6 +401,9 @@ def wallet_ballance():
     rental = session['thisid']
     pricetag = rentals.get_rental_price(rental)
     if myamount >= pricetag:
+        newbal = myamount - pricetag
+        id = session['custid']
+        updatebal = wallet.update_wallet_by_id(id, newbal)
         return redirect(url_for('finish'))
     else:
         return redirect(url_for('broke_wallet'))
@@ -409,8 +412,13 @@ def wallet_ballance():
 # succesiful wallet
 @app.route('/checkout/finish')
 def finish():
-    flash('booking was made. view wallet for balance', 'success')
-    return render_template('final.html')
+    if 'custemail' in session:
+        allrentals = rentals.fetch_by_status_occupied()
+        flash('booking was made succesifully.', 'success')
+        return render_template('final.html', allrentals=allrentals)
+    else:
+        return redirect(url_for('login'))
+
 
 # no money in wallet
 @app.route('/wallet/broke', methods=['POST', 'GET'])
@@ -557,7 +565,7 @@ def walletrecharge():
     entry = request.form['amount']
     id = session['custid']
     newentry = entry
-    update = wallet.update(id, newentry)
+    update = wallet.update_wallet_by_id(id, newentry)
     return redirect(url_for('main'))
 # update  status
 @app.route('/status/update/<int:id>', methods=['GET', 'POST'])
