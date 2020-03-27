@@ -1,89 +1,149 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <title>checkout</title>
-    <!-- <link rel="stylesheet" href="{{url_for('static',filename='css/checkout.css')}}" /> -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Order Management System</title>
+
+    <!-- bootstrap link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
     <style>
-        * {
-            font-family: Georgia, "Times New Roman", Times, serif;
-            text-transform: lowercase;
+        #checkout {
+            display: inline-flex;
+            width: 80%;
+            margin-left: 9%;
         }
 
-        body {
-            background-color: #f9f9f9;
-            opacity: .9;
-            color: #0000;
-            margin: 5px;
+        #pimage {
+            width: 50%;
+            height: 100%;
+            padding: 2%;
         }
 
-        hr {
-            opacity: .6;
-            width: 90%;
-            align-self: center;
-        }
-
-        /*dash*/
-        .dash {
+        #rimage {
             width: 100%;
-            align-self: center;
-            float: right;
-            color: black;
-            background-color: #f9f9f9;
-            display: inline-flex;
+            height: 100%;
+            border-radius: 5px;
         }
 
-        .dash .profile {
-            height: 5%;
-            display: inline-flex;
+        #detail {
+            width: 50%;
         }
 
-        .dash .profile .myprofile {
-            height: 3%;
-            width: 20%;
-            margin-right: 4%;
+        #details {
+            margin: 5%;
             margin-left: 20%;
-            border-radius: 50%;
+            text-align: center;
+            width: 90%;
+            padding: 4%;
         }
 
-        .dash .identity {
-            float: left;
-            margin-left: 0%;
-            margin-right: 60%;
+        #buttons {
+            align-content: center;
+            display: inline-flex;
+            padding: 5%;
         }
 
-        .dash .menu {
-            margin-left: 60%;
-            float: right;
-        }
-
-        .feedbackmessage .actualmessage {
-            color: #0000;
+        #btncheckout {
+            display: inline;
+            margin-right: 15%;
         }
     </style>
 </head>
 
 <body>
-    <div class="row">
-        <div class="dash">
-            <div class="profile">
-                <img class="myprofile" src="{{url_for('static',filename='img/myAvatar.png')}}" />
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Online renting</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav"></div>
+        </div>
+        <form action="/customer/logout" method="POST">
+            <button type="submit" class="btn btn-warning btn-md">Logout</button>
+        </form>
+    </nav>
 
+    <!-- home -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card ">
+                    <div class="card-body ">
+                        <div class="container">
+                            <div class="row">
+                                <div id="checkout">
+                                    <div id="pimage">
+                                        <img src="../static/img/apart.jpg" id="rimage">
+                                    </div>
+                                    <div id="detail">
+                                        <div id="header">
+                                        </div>
+                                        <div id="details">
+                                            {% for each in thisrental %}
+                                            <form action="/wallet/balance" method="POST">
+                                                <div class="form-group">
+                                                    <label for="productname"><strong>location</strong></label>
+                                                    <p>{{each.location}}</p>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="productname"><strong>description</strong></label>
+                                                    <p>{{each.description}}</p>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label><strong>Amount:</strong></label>
+                                                    <p>ksh. {{each.price }}</p>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label><strong>phone number:</strong></label>
+                                                    <p>+254 798954562</p>
+                                                </div>
+                                                <div id="buttons">
+                                                    <div class="form-group" id="btncheckout">
+                                                        <button type="submit" class="btn btn-success btn-md">
+                                                            checkout
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="menu">
-                <h3><a href="#" onclick="history.back()" style="color:black;text-decoration: none;">{{user}}</a></h3>
-            </div>
-        </div>
-        <hr />
-    </div>
-    <div class="feedbackmessage">
-        <div class="actualmessage">
-            <h3>Your book request was taken in. You will rceive an email with further instructions.</h3>
-        </div>
-        <div class="backbutton">
-            <h3> <a style="color: black; text-decoration: none;" onclick=" history.back()" href="#">Back</a>
-            </h3>
         </div>
     </div>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script>
+        function cookiefy() {
+            // var x = document.getElementById('myid').getAttribute("value");
+            // var res = x.charAt(x.length - 1);
+            // Cookies.set('id', res);
+            var idcookie = {};
+            idcookie['name'] = 'id';
+            idcookie['value'] = res;
+            document.Cookies = "";
+            Cookies.set(idcookie);
+        } -->
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
 </body>
 
 </html>

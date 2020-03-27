@@ -2,15 +2,14 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Order Management System</title>
 
     <!-- bootstrap link -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
 </head>
 
 <body>
@@ -21,9 +20,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-
-            </div>
+            <div class="navbar-nav"></div>
         </div>
         <form action="/customer/logout" method="POST">
             <button type="submit" class="btn btn-warning btn-md">Logout</button>
@@ -47,15 +44,18 @@
                                 <div class="col-md-3 mb-5">
                                     <div class="card  shadow-lg" style="width: 15rem;">
                                         <img class="card-img-top" src="{{ each.img }}" alt="Card image cap"
-                                            height="150">
+                                            height="150" />
                                         <div class="card-body">
                                             <h5 class="card-title">{{ each.location }}</h5>
                                             <p class="card-text">{{ each.description }}</p>
-                                            <p class="text-monospace text-sm text-danger"><span>monthly rent: KES</span>
-                                                {{ each.price }}</p>
+                                            <p class="text-monospace text-sm text-danger">
+                                                <span>monthly rent: KES</span> {{ each.price }}
+                                            </p>
                                             <!-- <a href="#" class="btn btn-primary">Place bid</a> -->
-                                            <button class="btn btn-primary" data-toggle="modal"
-                                                data-target="#bid{{ each.id }}">book rental</button>
+                                            <button class="btn btn-primary" data-toggle="modal" id="this"
+                                                data-target="#bid{{ each.id }}" onclick="cookiefy()">
+                                                book rental
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -66,7 +66,9 @@
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Place bid</h5>
+                                                <h5 class="modal-title" id="exampleModalLabel">
+                                                    Book space
+                                                </h5>
                                                 <button type="button" class="close" data-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
@@ -76,8 +78,8 @@
                                                 <form action="/rentals/book" method="POST">
                                                     <div class="form-group">
                                                         <label for="productname">rental id:</label>
-                                                        <input type="text" class="form-control" name="id"
-                                                            value="{{ each.id }}">
+                                                        <input type="text" class="form-control" name="id" id="myid"
+                                                            value="{{ each.id }}" />
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="productname">description</label>
@@ -86,24 +88,22 @@
                                                     <div class="form-group">
                                                         <label for="">price:</label>
                                                         <p style="color:red;">* Ksh {{ each.price }}</p>
-
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="">Movein Date:</label>
                                                         <input style="color:red;" type="date" class="form-control"
-                                                            name="date">
+                                                            name="date" required />
                                                     </div>
                                                     <div class="form-group">
-                                                        <button type="submit"
-                                                            class="btn btn-success btn-md">Book</button>
+                                                        <button type="submit" class="btn btn-success btn-md">
+                                                            Book
+                                                        </button>
                                                     </div>
                                                 </form>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
-
 
                                 {% endfor %}
                             </div>
@@ -113,11 +113,19 @@
             </div>
         </div>
     </div>
-
-
-
-
-
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script>
+        function cookiefy() {
+            var x = document.getElementById('myid').getAttribute("value");
+            var res = x.charAt(x.length - 1);
+            // Cookies.set('id', res);
+            var idcookie = {};
+            idcookie['name'] = 'id';
+            idcookie['value'] = res;
+            Cookies.set("");
+            Cookies.set(idcookie);
+        }
+    </script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
     </script>
