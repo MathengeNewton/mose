@@ -3,7 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from PIL import Image
 from flask_bcrypt import Bcrypt
 import time
+import datetime
 import os
+import random
+import string
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:mathenge,./1998@localhost/mainapp'
@@ -62,8 +65,8 @@ class customers(db.Model):
 class owners(db.Model):
     id = db.Column(db.Integer, nullable=False,
                    primary_key=True, autoincrement=True)
-    name = db.Column(db.String(15), nullable=False)
-    email = db.Column(db.String(20), nullable=False, unique=True)
+    name = db.Column(db.String(200), nullable=False)
+    email = db.Column(db.String(200), nullable=False, unique=True)
     phone_number = db.Column(db.String(30), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
 
@@ -73,10 +76,11 @@ class owners(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    # check if email is in use
+    # check if email exists
     @classmethod
     def check_email_exist(cls, email):
         owners = cls.query.filter_by(email=email).first()
+        print(owners)
         if owners:
             return True
         else:
@@ -86,7 +90,6 @@ class owners(db.Model):
     @classmethod
     def validate_password(cls, email, password):
         owners = cls.query.filter_by(email=email).first()
-
         if owners and bcrypt.check_password_hash(owners.password, password):
             return True
         else:
@@ -137,30 +140,26 @@ class rentals(db.Model):
     @classmethod
     def update_rental_by_id(cls, id):
         rental = cls.query.filter_by(id=id).first()
-
         if rental:
-            status = rental.status
-            if status:
-                if status == 'booked':
-                    newstatus = 'vacant'
-                    rental.status = newstatus
-                    db.session.commit()
-                    return True
-                else:
-                    newstatus = 'booked'
-                    rental.status = newstatus
-                    db.session.commit()
-                    return True
+            status = rental.status            
+            if status == 'booked':
+                newstatus = 'vacant'
+                rental.status = newstatus
+                db.session.commit()
+                return True
             else:
-                return False
+                newstatus = 'booked'
+                rental.status = newstatus
+                db.session.commit()
+                return True
         else:
             return False
 
     # delete rental by id
     @classmethod
     def delete_by_id(cls, id):
-        rental = cls.query.filter_by(id=id)
-        if rental.first():
+        rental = cls.query.filter_by(id=id).first()
+        if rental:
             rental.delete()
             db.session.commit()
             return True
@@ -233,9 +232,12 @@ class wallet(db.Model):
             db.session.commit()
             return True
         return False
+
+#random character generator 
+def randomgenerator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 #  function that check if an extension is valid, uploads a file and redirect user to url for image
-
-
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -285,6 +287,8 @@ def start():
 @app.route('/owner/register')
 def owner_register():
     return render_template('adminreg.html')
+
+
 # owner registration occurs
 @app.route('/owner_reg', methods=['POST', 'GET'])
 def owner_reg():
@@ -298,19 +302,23 @@ def owner_reg():
         if password != confirmpass:
             flash('Passwords dont match', 'danger')
             return redirect(url_for('owner_register'))
-        elif(owners.check_email_exist(email)):
+        elif owners.check_email_exist(email):
+
             flash('Email already in use', 'danger')
             return redirect(url_for('owner_register'))
         else:
             hashpassword = bcrypt.generate_password_hash(
                 password).decode('utf-8')
-
-            y = owners(name=name, email=email,
+            try:
+                y = owners(name=name, email=email,
                        phone_number=phone, password=hashpassword)
-            y.insert_record()
+                y.insert_record()
 
-            flash('Account successfully created', 'success')
-            return redirect(url_for('owner_login'))
+                flash('Account successfully created', 'success')
+                return redirect(url_for('owner_login'))
+            except :
+                flash('Account creation failed. check your credentials and try again', 'danger')
+                return redirect(url_for('owner_register'))
 
     return redirect(url_for('owner_register'))
 
@@ -368,11 +376,14 @@ def cust_reg():
                 password).decode('utf-8')
             session['myemail'] = email
             session['phone'] = phone
-            y = customers(name=name, email=email,
+            try:
+                y = customers(name=name, email=email,
                           phone_number=phone, password=hashpassword)
-            y.insert_record()
-
-            return redirect(url_for('wallet_create'))
+                y.insert_record()
+                return redirect(url_for('wallet_create'))
+            except:
+                flash('error creating account','danger')
+                return redirect(url_for('registration'))            
 
     return redirect(url_for('registrtion'))
 
@@ -412,12 +423,16 @@ def wallet_ballance():
 # succesiful wallet
 @app.route('/checkout/finish')
 def finish():
-    if 'custemail' in session:
-        allrentals = rentals.fetch_by_status_occupied()
-        flash('booking was made succesifully.', 'success')
-        return render_template('final.html', allrentals=allrentals)
+    if 'custemail' in session:        
+        return redirect(url_for('main'))
     else:
         return redirect(url_for('login'))
+
+@app.route('/booked')
+def booked():
+    allrentals = rentals.fetch_by_status_occupied()
+    flash('booking was made succesifully.', 'success')
+    return render_template('dash.html', allrentals=allrentals)
 
 
 # no money in wallet
@@ -547,9 +562,16 @@ def check_out():
         rid = session['thisid']
         thisrental = rentals.get_rental_by_id(rid)
         return render_template('checkout.html', thisrental=thisrental)
-
     else:
         return redirect(url_for('main'))
+
+@app.route('/wallet/status')
+def WalletStatus():
+    id = session['custid']
+    CurrentAmount = wallet.view_current_amount(id)
+    date = datetime.date.today()
+    return render_template('mywallet.html',amount = CurrentAmount,date = date)
+
 
 # update wallet
 @app.route('/wallet/recharge', methods=['POST', 'GET'])
@@ -564,13 +586,19 @@ def recharge_wallet():
 def walletrecharge():
     entry = request.form['amount']
     id = session['custid']
-    newentry = entry
-    update = wallet.update_wallet_by_id(id, newentry)
-    return redirect(url_for('main'))
+    new = entry
+    newentry = int(new)
+    Current = wallet.view_current_amount(id)
+    CurrentAmount = int(Current) 
+    newamount = newentry + CurrentAmount
+    update = wallet.update_wallet_by_id(id, newamount)
+    return redirect(url_for('WalletStatus'))
+
 # update  status
 @app.route('/status/update/<int:id>', methods=['GET', 'POST'])
 def update_status(id):
-    if request.method == 'POST' and 'custemail' in session:
+    if request.method == 'POST':
+        print(id)
         up = rentals.update_rental_by_id(id=id)
         if up:
             flash('update successful', 'success')
@@ -578,6 +606,14 @@ def update_status(id):
         else:
             flash('record not found', 'danger')
             return redirect(url_for('rentals_all'))
+    else:
+        return redirect(url_for('rentals_all'))
+
+# @app.route('/status/update/error-outcome')
+# def status_error():
+#     allr = rentals.fetch_all()
+#     flash("An error occured","danger")
+#     return render_template('allrentals.html', allr=allr)
 
 # delete a product
 @app.route('/delete/<int:id>', methods=['POST'])
@@ -589,6 +625,50 @@ def delete(id):
     else:
         flash("Record not found", 'danger')
         return redirect(url_for('rentals_all'))
+
+# @app.route('/reset')
+# def tenant_reset_password():
+#     return render_template('reset.html')
+
+# @app.route('/tenanteset',methods=['POST'])
+# def tenant_reset():
+#     return 'done'
+
+@app.route('/owner/reset')
+def owner_reset_password():
+    return render_template('admingetcode.html')
+
+
+@app.route('/owner/resetpass',methods = ['POST','GET'])
+def owner_reset():
+    if request.method == 'POST':
+        email = request.form['email']        
+        if owners.check_email_exist(email):
+            t = randomgenerator()
+            print(t)
+            return f'true'
+        else:
+            flash('email doesn not exist','danger')
+            return redirect(url_for('owner_reset_password'))
+    else:
+        flash('Incorrect method','danger')
+        return redirect(url_for('owner_reset_password'))
+
+    return render_template('adminreset.html')
+
+
+
+@app.route('/owner/api/reset',methods=['POST'])
+def api_reset():
+    password = request.form['password']
+    confirmpass = request.form['confirmpassword']
+    if password != confirmpass:
+            flash('Passwords dont match', 'danger')
+            return redirect(url_for('owner_reset'))
+    else:
+        flash('Password reset', 'success')
+        return redirect(url_for('admin'))
+    return redirect(url_for('owner_reset_password'))
 
 
 @app.route('/owner/logout', methods=['POST'])

@@ -156,7 +156,6 @@ The above copyright notice and this permission notice shall be included in all c
                                     <div class="table-responsive">
                                         <table class="table" id="myTable">
                                             <thead class="text-primary">
-                                                <th>rental ID</th>
                                                 <th>location</th>
                                                 <th>Breif description</th>
                                                 <th>price</th>
@@ -167,7 +166,6 @@ The above copyright notice and this permission notice shall be included in all c
                                             <tbody>
                                                 {% for each in allr %}
                                                 <tr>
-                                                    <td>{{ each.id }}</td>
                                                     <td>{{ each.location }}</td>
                                                     <td>{{ each.description }}</td>
                                                     <td>{{ each.price }}</td>
@@ -306,7 +304,7 @@ The above copyright notice and this permission notice shall be included in all c
                 selection.addRange(range);
             }
         }
-        window.onload = function () {
+        window.onload=()=> {
             var iconsWrapper = document.getElementById('icons-wrapper'),
                 listItems = iconsWrapper.getElementsByTagName('li');
             for (var i = 0; i < listItems.length; i++) {

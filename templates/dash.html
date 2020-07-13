@@ -22,12 +22,14 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav"></div>
         </div>
+        
         <form action="/customer/logout" method="POST">
             <button type="submit" class="btn btn-warning btn-md">Logout</button>
         </form>
     </nav>
 
     <!-- home -->
+    <a href="/wallet/status" class="btn btn-primary btn-md" style="margin: 10px;">My wallet</a>
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -38,7 +40,9 @@
                         <button class="btn btn-primary" data-toggle="modal" data-target="#addProduct">Add product</button>
                     </div> -->
                     <div class="card-body ">
+                        
                         <div class="container">
+                            
                             <div class="row">
                                 {% for each in allrentals %}
                                 <div class="col-md-3 mb-5">

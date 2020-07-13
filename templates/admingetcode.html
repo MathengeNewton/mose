@@ -15,8 +15,8 @@
 <body>
     <div class="login-page">
         <div class="form">
-            <form action="/owner/log_in" method="POST" class="login-form">
-                <h6>Owner login</h6>
+            <form action="/owner/resetpass" method="POST" class="login-form">
+                <h6>Get reset code</h6>
                 <div class="form-group">
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
@@ -29,10 +29,7 @@
                     {% endwith %}
                 </div>
                 <input type="text" name="email" placeholder="email" required />
-                <input type="password" name="password" placeholder="password" required />
-                <button>login</button>
-                <p class="message">Dont have an account? <a href="/owner/register">Create account</a></p>
-                <p class="message">Forgot Password? <a href='/owner/reset'>Reset password</a></p>
+                <button>get code</button>
             </form>
         </div>
     </div>
