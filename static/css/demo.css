@@ -43,7 +43,7 @@
 .offline-doc .footer {
     position: absolute;
     width: 100%;
-    background: transparent;
+    background: transpaacquire;
     bottom: 0;
     color: #fff;
     z-index: 1;
@@ -181,7 +181,7 @@
 
 .demo-icons ul input {
     text-align: center;
-    background: transparent;
+    background: transpaacquire;
     border: none;
     box-shadow: none;
     outline: none;

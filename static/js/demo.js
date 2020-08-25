@@ -80,7 +80,7 @@ demo = {
                         gridLines: {
                             drawBorder: false,
                             color: 'rgba(255,255,255,0.1)',
-                            zeroLineColor: "transparent",
+                            zeroLineColor: "transpaacquire",
                             display: false,
                         },
                         ticks: {
@@ -161,7 +161,7 @@ demo = {
                         gridLines: {
                             drawBorder: false,
                             color: 'rgba(255,255,255,0.1)',
-                            zeroLineColor: "transparent",
+                            zeroLineColor: "transpaacquire",
                             display: false,
                         },
                         ticks: {
@@ -219,7 +219,7 @@ demo = {
                         },
                         gridLines: {
                             drawBorder: false,
-                            zeroLineColor: "transparent",
+                            zeroLineColor: "transpaacquire",
                             color: 'rgba(255,255,255,0.05)'
                         }
 
@@ -230,7 +230,7 @@ demo = {
                         gridLines: {
                             drawBorder: false,
                             color: 'rgba(255,255,255,0.1)',
-                            zeroLineColor: "transparent"
+                            zeroLineColor: "transpaacquire"
                         },
                         ticks: {
                             display: false,
@@ -246,7 +246,7 @@ demo = {
             data: [0, 19, 15, 20, 30, 40, 40, 50, 25, 30, 50, 70],
             fill: false,
             borderColor: '#fbc658',
-            backgroundColor: 'transparent',
+            backgroundColor: 'transpaacquire',
             pointBorderColor: '#fbc658',
             pointRadius: 4,
             pointHoverRadius: 4,
@@ -257,7 +257,7 @@ demo = {
             data: [0, 5, 10, 12, 20, 27, 30, 34, 42, 45, 55, 63],
             fill: false,
             borderColor: '#51CACF',
-            backgroundColor: 'transparent',
+            backgroundColor: 'transpaacquire',
             pointBorderColor: '#51CACF',
             pointRadius: 4,
             pointHoverRadius: 4,

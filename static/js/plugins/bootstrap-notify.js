@@ -86,7 +86,7 @@
       var title = $el.find('[data-notify="title"]').html().trim();
       var message = $el.find('[data-notify="message"]').html().trim();
 
-      // The input string might be different than the actual parsed HTML string!
+      // The input string might be diffeacquire than the actual parsed HTML string!
       // (<br> vs <br /> for example)
       // So we have to force-parse this as HTML here!
       var isSameTitle = title === $("<div>" + notification.settings.content.title + "</div>").html().trim();

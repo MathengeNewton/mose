@@ -235,7 +235,7 @@ Copyright (c) 2015 Daniel Eden
 .ps-container.ps-active-x>.ps-scrollbar-x-rail,
 .ps-container.ps-active-y>.ps-scrollbar-y-rail {
   display: block;
-  background-color: transparent;
+  background-color: transpaacquire;
 }
 
 .ps-container.ps-in-scrolling.ps-x>.ps-scrollbar-x-rail {
@@ -492,7 +492,7 @@ fieldset[disabled] .navbar .navbar-nav>a.btn.active {
 .navbar .navbar-nav>a.btn.btn-simple:hover,
 .navbar .navbar-nav>a.btn.btn-simple:focus,
 .navbar .navbar-nav>a.btn.btn-simple:active {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #403D39;
   border-color: #403D39;
   box-shadow: none;
@@ -511,7 +511,7 @@ fieldset[disabled] .navbar .navbar-nav>a.btn.active {
 .navbar .navbar-nav>a.btn.btn-link:focus,
 .navbar .navbar-nav>a.btn.btn-link:active,
 .navbar .navbar-nav>a.btn.btn-link:active:focus {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #403D39;
   text-decoration: none;
   box-shadow: none;
@@ -683,7 +683,7 @@ fieldset[disabled] .btn-primary.active {
 .btn-primary.btn-simple:hover,
 .btn-primary.btn-simple:focus,
 .btn-primary.btn-simple:active {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #34b5b8;
   border-color: #34b5b8;
   box-shadow: none;
@@ -697,7 +697,7 @@ fieldset[disabled] .btn-primary.active {
 .btn-primary.btn-link:focus,
 .btn-primary.btn-link:active,
 .btn-primary.btn-link:active:focus {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #34b5b8;
   text-decoration: none;
   box-shadow: none;
@@ -764,7 +764,7 @@ fieldset[disabled] .btn-success.active {
 .btn-success.btn-simple:hover,
 .btn-success.btn-simple:focus,
 .btn-success.btn-simple:active {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #44c47d;
   border-color: #44c47d;
   box-shadow: none;
@@ -778,7 +778,7 @@ fieldset[disabled] .btn-success.active {
 .btn-success.btn-link:focus,
 .btn-success.btn-link:active,
 .btn-success.btn-link:active:focus {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #44c47d;
   text-decoration: none;
   box-shadow: none;
@@ -845,7 +845,7 @@ fieldset[disabled] .btn-info.active {
 .btn-info.btn-simple:hover,
 .btn-info.btn-simple:focus,
 .btn-info.btn-simple:active {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #2ba9cd;
   border-color: #2ba9cd;
   box-shadow: none;
@@ -859,7 +859,7 @@ fieldset[disabled] .btn-info.active {
 .btn-info.btn-link:focus,
 .btn-info.btn-link:active,
 .btn-info.btn-link:active:focus {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #2ba9cd;
   text-decoration: none;
   box-shadow: none;
@@ -926,7 +926,7 @@ fieldset[disabled] .btn-warning.active {
 .btn-warning.btn-simple:hover,
 .btn-warning.btn-simple:focus,
 .btn-warning.btn-simple:active {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #fab526;
   border-color: #fab526;
   box-shadow: none;
@@ -940,7 +940,7 @@ fieldset[disabled] .btn-warning.active {
 .btn-warning.btn-link:focus,
 .btn-warning.btn-link:active,
 .btn-warning.btn-link:active:focus {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #fab526;
   text-decoration: none;
   box-shadow: none;
@@ -1007,7 +1007,7 @@ fieldset[disabled] .btn-danger.active {
 .btn-danger.btn-simple:hover,
 .btn-danger.btn-simple:focus,
 .btn-danger.btn-simple:active {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #eb6532;
   border-color: #eb6532;
   box-shadow: none;
@@ -1021,14 +1021,14 @@ fieldset[disabled] .btn-danger.active {
 .btn-danger.btn-link:focus,
 .btn-danger.btn-link:active,
 .btn-danger.btn-link:active:focus {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #eb6532;
   text-decoration: none;
   box-shadow: none;
 }
 
 .btn-outline-default {
-  background: transparent;
+  background: transpaacquire;
   border: 2px solid #66615B !important;
   color: #66615B;
   opacity: 1;
@@ -1083,12 +1083,12 @@ fieldset[disabled] .btn-outline-default:focus,
 fieldset[disabled] .btn-outline-default.focus,
 fieldset[disabled] .btn-outline-default:active,
 fieldset[disabled] .btn-outline-default.active {
-  background-color: transparent !important;
+  background-color: transpaacquire !important;
   border-color: #66615B !important;
 }
 
 .btn-outline-primary {
-  background: transparent;
+  background: transpaacquire;
   border: 2px solid #51cbce !important;
   color: #51cbce;
   opacity: 1;
@@ -1143,12 +1143,12 @@ fieldset[disabled] .btn-outline-primary:focus,
 fieldset[disabled] .btn-outline-primary.focus,
 fieldset[disabled] .btn-outline-primary:active,
 fieldset[disabled] .btn-outline-primary.active {
-  background-color: transparent !important;
+  background-color: transpaacquire !important;
   border-color: #51cbce !important;
 }
 
 .btn-outline-success {
-  background: transparent;
+  background: transpaacquire;
   border: 2px solid #6bd098 !important;
   color: #6bd098;
   opacity: 1;
@@ -1203,12 +1203,12 @@ fieldset[disabled] .btn-outline-success:focus,
 fieldset[disabled] .btn-outline-success.focus,
 fieldset[disabled] .btn-outline-success:active,
 fieldset[disabled] .btn-outline-success.active {
-  background-color: transparent !important;
+  background-color: transpaacquire !important;
   border-color: #6bd098 !important;
 }
 
 .btn-outline-info {
-  background: transparent;
+  background: transpaacquire;
   border: 2px solid #51bcda !important;
   color: #51bcda;
   opacity: 1;
@@ -1263,12 +1263,12 @@ fieldset[disabled] .btn-outline-info:focus,
 fieldset[disabled] .btn-outline-info.focus,
 fieldset[disabled] .btn-outline-info:active,
 fieldset[disabled] .btn-outline-info.active {
-  background-color: transparent !important;
+  background-color: transpaacquire !important;
   border-color: #51bcda !important;
 }
 
 .btn-outline-warning {
-  background: transparent;
+  background: transpaacquire;
   border: 2px solid #fbc658 !important;
   color: #fbc658;
   opacity: 1;
@@ -1323,12 +1323,12 @@ fieldset[disabled] .btn-outline-warning:focus,
 fieldset[disabled] .btn-outline-warning.focus,
 fieldset[disabled] .btn-outline-warning:active,
 fieldset[disabled] .btn-outline-warning.active {
-  background-color: transparent !important;
+  background-color: transpaacquire !important;
   border-color: #fbc658 !important;
 }
 
 .btn-outline-danger {
-  background: transparent;
+  background: transpaacquire;
   border: 2px solid #ef8157 !important;
   color: #ef8157;
   opacity: 1;
@@ -1383,12 +1383,12 @@ fieldset[disabled] .btn-outline-danger:focus,
 fieldset[disabled] .btn-outline-danger.focus,
 fieldset[disabled] .btn-outline-danger:active,
 fieldset[disabled] .btn-outline-danger.active {
-  background-color: transparent !important;
+  background-color: transpaacquire !important;
   border-color: #ef8157 !important;
 }
 
 .btn-outline-neutral {
-  background: transparent;
+  background: transpaacquire;
   border: 2px solid #FFFFFF !important;
   color: #FFFFFF;
   opacity: 1;
@@ -1443,7 +1443,7 @@ fieldset[disabled] .btn-outline-neutral:focus,
 fieldset[disabled] .btn-outline-neutral.focus,
 fieldset[disabled] .btn-outline-neutral:active,
 fieldset[disabled] .btn-outline-neutral.active {
-  background-color: transparent !important;
+  background-color: transpaacquire !important;
   border-color: #FFFFFF !important;
 }
 
@@ -1594,7 +1594,7 @@ fieldset[disabled] .btn-neutral.active {
 .btn-neutral.btn-simple:hover,
 .btn-neutral.btn-simple:focus,
 .btn-neutral.btn-simple:active {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #FFFFFF;
   border-color: #FFFFFF;
   box-shadow: none;
@@ -1608,7 +1608,7 @@ fieldset[disabled] .btn-neutral.active {
 .btn-neutral.btn-link:focus,
 .btn-neutral.btn-link:active,
 .btn-neutral.btn-link:active:focus {
-  background-color: transparent;
+  background-color: transpaacquire;
   color: #FFFFFF;
   text-decoration: none;
   box-shadow: none;
@@ -1633,7 +1633,7 @@ fieldset[disabled] .btn-neutral.active {
 
 .btn-neutral.btn-link:active,
 .btn-neutral.btn-link.active {
-  background-color: transparent;
+  background-color: transpaacquire;
 }
 
 .btn:disabled,
@@ -1648,7 +1648,7 @@ fieldset[disabled] .btn-neutral.active {
   border: 1px solid;
   border-color: #66615B;
   padding: 10px 22px;
-  background-color: transparent;
+  background-color: transpaacquire;
 }
 
 .btn-simple.disabled,
@@ -1699,13 +1699,13 @@ fieldset[disabled] .btn-link:focus,
 fieldset[disabled] .btn-link.focus,
 fieldset[disabled] .btn-link:active,
 fieldset[disabled] .btn-link.active {
-  background-color: transparent;
+  background-color: transpaacquire;
 }
 
 .btn-link {
   border: 0;
   padding: 0.5rem 0.7rem;
-  background-color: transparent;
+  background-color: transpaacquire;
 }
 
 .btn-lg {
@@ -1812,7 +1812,7 @@ fieldset[disabled] .btn-link.active {
 .form-control:focus~.input-group-prepend .input-group-text {
   border: 1px solid #ccc;
   border-left: none;
-  background-color: transparent;
+  background-color: transpaacquire;
 }
 
 .has-success .form-control,
@@ -1864,7 +1864,7 @@ fieldset[disabled] .btn-link.active {
 
 .open .form-control {
   border-radius: 6px 6px 0 0;
-  border-bottom-color: transparent;
+  border-bottom-color: transpaacquire;
 }
 
 .form-control+.input-group-append .input-group-text,
@@ -2078,7 +2078,7 @@ fieldset[disabled] .btn-link.active {
 
 .input-group-append .input-group-text,
 .input-group-prepend .input-group-text {
-  background-color: transparent;
+  background-color: transpaacquire;
   border: 1px solid #E3E3E3;
   color: #66615B;
   border-top-right-radius: 4px;
@@ -2579,8 +2579,8 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
   vertical-align: middle;
   border-top: 4px dashed;
   border-top: 4px solid\9;
-  border-right: 4px solid transparent;
-  border-left: 4px solid transparent;
+  border-right: 4px solid transpaacquire;
+  border-left: 4px solid transpaacquire;
 }
 
 .pull-left {
@@ -2591,17 +2591,17 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
   float: right;
 }
 
-.offline-doc .navbar.navbar-transparent {
+.offline-doc .navbar.navbar-transpaacquire {
   padding-top: 25px;
   border-bottom: none;
 }
 
-.offline-doc .navbar.navbar-transparent .navbar-minimize {
+.offline-doc .navbar.navbar-transpaacquire .navbar-minimize {
   display: none;
 }
 
-.offline-doc .navbar.navbar-transparent .navbar-brand,
-.offline-doc .navbar.navbar-transparent .collapse .navbar-nav .nav-link {
+.offline-doc .navbar.navbar-transpaacquire .navbar-brand,
+.offline-doc .navbar.navbar-transpaacquire .collapse .navbar-nav .nav-link {
   color: #FFFFFF !important;
 }
 
@@ -3012,7 +3012,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
   overflow: hidden;
   margin: 0 auto;
   border-radius: 50%;
-  border: 1px solid transparent;
+  border: 1px solid transpaacquire;
 }
 
 .navbar .navbar-brand {
@@ -3042,34 +3042,34 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
   width: 17px;
 }
 
-.navbar.navbar-transparent {
-  background-color: transparent !important;
+.navbar.navbar-transpaacquire {
+  background-color: transpaacquire !important;
   box-shadow: none;
   border-bottom: 1px solid #ddd;
 }
 
-.navbar.navbar-transparent a:not(.dropdown-item):not(.btn) {
+.navbar.navbar-transpaacquire a:not(.dropdown-item):not(.btn) {
   color: #66615B;
 }
 
-.navbar.navbar-transparent a:not(.dropdown-item):not(.btn).disabled {
+.navbar.navbar-transpaacquire a:not(.dropdown-item):not(.btn).disabled {
   opacity: .5;
   color: #66615B;
 }
 
-.navbar.navbar-transparent .button-bar {
+.navbar.navbar-transpaacquire .button-bar {
   background: #66615B;
 }
 
-.navbar.navbar-transparent .nav-item .nav-link:not(.btn) {
+.navbar.navbar-transpaacquire .nav-item .nav-link:not(.btn) {
   color: #66615B;
 }
 
-.navbar.navbar-transparent .nav-item.active .nav-link:not(.btn),
-.navbar.navbar-transparent .nav-item .nav-link:not(.btn):focus,
-.navbar.navbar-transparent .nav-item .nav-link:not(.btn):hover,
-.navbar.navbar-transparent .nav-item .nav-link:not(.btn):focus:hover,
-.navbar.navbar-transparent .nav-item .nav-link:not(.btn):active {
+.navbar.navbar-transpaacquire .nav-item.active .nav-link:not(.btn),
+.navbar.navbar-transpaacquire .nav-item .nav-link:not(.btn):focus,
+.navbar.navbar-transpaacquire .nav-item .nav-link:not(.btn):hover,
+.navbar.navbar-transpaacquire .nav-item .nav-link:not(.btn):focus:hover,
+.navbar.navbar-transpaacquire .nav-item .nav-link:not(.btn):active {
   color: #51cbce;
 }
 
@@ -3457,8 +3457,8 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 .card-just-text .dropdown .dropdown-menu:before,
 .dropdown-btn .dropdown-menu:before {
   border-bottom: 11px solid #F1EAE0;
-  border-left: 11px solid transparent;
-  border-right: 11px solid transparent;
+  border-left: 11px solid transpaacquire;
+  border-right: 11px solid transpaacquire;
   content: "";
   display: inline-block;
   position: absolute;
@@ -3473,8 +3473,8 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 .card-just-text .dropdown .dropdown-menu:after,
 .dropdown-btn .dropdown-menu:after {
   border-bottom: 11px solid #FFFFFF;
-  border-left: 11px solid transparent;
-  border-right: 11px solid transparent;
+  border-left: 11px solid transpaacquire;
+  border-right: 11px solid transpaacquire;
   content: "";
   display: inline-block;
   position: absolute;
@@ -3624,8 +3624,8 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 .dropdown .dropdown-menu[x-placement="top-end"]:before,
 .dropup .dropdown-menu:before {
   border-top: 11px solid #DCD9D1;
-  border-left: 11px solid transparent;
-  border-right: 11px solid transparent;
+  border-left: 11px solid transpaacquire;
+  border-right: 11px solid transpaacquire;
   content: "";
   display: inline-block;
   position: absolute;
@@ -3637,8 +3637,8 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 .dropdown .dropdown-menu[x-placement="top-end"]:after,
 .dropup .dropdown-menu:after {
   border-top: 11px solid #FFF;
-  border-left: 11px solid transparent;
-  border-right: 11px solid transparent;
+  border-left: 11px solid transpaacquire;
+  border-right: 11px solid transpaacquire;
   content: "";
   display: inline-block;
   position: absolute;
@@ -5302,7 +5302,7 @@ License - nucleoapp.com/license/
 }
 
 .fixed-plugin .adjustments-line a {
-  color: transparent;
+  color: transpaacquire;
 }
 
 .fixed-plugin .adjustments-line a .badge-colors {
@@ -5312,7 +5312,7 @@ License - nucleoapp.com/license/
 
 .fixed-plugin .adjustments-line a a:hover,
 .fixed-plugin .adjustments-line a a:focus {
-  color: transparent;
+  color: transpaacquire;
 }
 
 .fixed-plugin .adjustments-line .togglebutton {
@@ -5364,7 +5364,7 @@ License - nucleoapp.com/license/
 
 .fixed-plugin .dropdown-menu>li a.switch-trigger:hover,
 .fixed-plugin .dropdown-menu>li>a.switch-trigger:focus {
-  background-color: transparent;
+  background-color: transpaacquire;
 }
 
 .fixed-plugin .dropdown-menu>li:hover>a.img-holder,
@@ -5399,17 +5399,17 @@ License - nucleoapp.com/license/
 }
 
 .fixed-plugin .dropdown .dropdown-menu:before {
-  border-bottom: 16px solid transparent;
+  border-bottom: 16px solid transpaacquire;
   border-left: 16px solid rgba(0, 0, 0, 0.2);
-  border-top: 16px solid transparent;
+  border-top: 16px solid transpaacquire;
   right: -27px;
   bottom: 425px;
 }
 
 .fixed-plugin .dropdown .dropdown-menu:after {
-  border-bottom: 16px solid transparent;
+  border-bottom: 16px solid transpaacquire;
   border-left: 16px solid #FFFFFF;
-  border-top: 16px solid transparent;
+  border-top: 16px solid transpaacquire;
   right: -26px;
   bottom: 425px;
 }
@@ -5502,7 +5502,7 @@ License - nucleoapp.com/license/
 }
 
 .card .card-header:not([data-background-color]) {
-  background-color: transparent;
+  background-color: transpaacquire;
 }
 
 .card .card-header .card-title {
@@ -5577,7 +5577,7 @@ License - nucleoapp.com/license/
 }
 
 .card .card-footer {
-  background-color: transparent;
+  background-color: transpaacquire;
   border: 0;
 }
 
@@ -5593,7 +5593,7 @@ License - nucleoapp.com/license/
 }
 
 .card.card-plain {
-  background-color: transparent;
+  background-color: transpaacquire;
   box-shadow: none;
   border-radius: 0;
 }
@@ -5608,7 +5608,7 @@ License - nucleoapp.com/license/
 }
 
 .card-plain {
-  background: transparent;
+  background: transpaacquire;
   box-shadow: none;
 }
 
@@ -5616,7 +5616,7 @@ License - nucleoapp.com/license/
 .card-plain .card-footer {
   margin-left: 0;
   margin-right: 0;
-  background-color: transparent;
+  background-color: transpaacquire;
 }
 
 .card-plain:not(.card-subcategories).card-body {
@@ -5845,7 +5845,7 @@ License - nucleoapp.com/license/
     width: 17px;
     transition: width .2s linear;
   }
-  .navbar.bg-white:not(.navbar-transparent) .navbar-toggler-bar {
+  .navbar.bg-white:not(.navbar-transpaacquire) .navbar-toggler-bar {
     background-color: #66615B;
   }
   .navbar .toggled .navbar-toggler-bar {
@@ -5918,7 +5918,7 @@ License - nucleoapp.com/license/
   .bar1,
   .bar2,
   .bar3 {
-    outline: 1px solid transparent;
+    outline: 1px solid transpaacquire;
   }
   .bar1 {
     top: 0px;
@@ -6189,7 +6189,7 @@ License - nucleoapp.com/license/
     content: "";
     z-index: 9999;
     overflow-x: hidden;
-    background-color: transparent;
+    background-color: transpaacquire;
     -webkit-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
     -moz-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
     -o-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
@@ -6296,8 +6296,8 @@ License - nucleoapp.com/license/
   .sidebar .sidebar-wrapper li.active>a:not([data-toggle="collapse"]):before,
   .sidebar .sidebar-wrapper li.active>[data-toggle="collapse"]+div .nav li:before {
     border-right: 17px solid #DDDDDD;
-    border-top: 17px solid transparent;
-    border-bottom: 17px solid transparent;
+    border-top: 17px solid transpaacquire;
+    border-bottom: 17px solid transpaacquire;
     content: "";
     display: inline-block;
     position: absolute;
@@ -6309,8 +6309,8 @@ License - nucleoapp.com/license/
   .sidebar .sidebar-wrapper li.active>a:not([data-toggle="collapse"]):after,
   .sidebar .sidebar-wrapper li.active>[data-toggle="collapse"]+div .nav li:after {
     border-right: 17px solid #f4f3ef;
-    border-top: 17px solid transparent;
-    border-bottom: 17px solid transparent;
+    border-top: 17px solid transpaacquire;
+    border-bottom: 17px solid transpaacquire;
     content: "";
     display: inline-block;
     position: absolute;

@@ -14,7 +14,7 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">Online renting</a>
+        <a class="navbar-brand" href="#">Online acquireing</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -47,7 +47,7 @@
                             </div>
                             <div class="row">
 
-                                {% for each in allrentals %}
+                                {% for each in allproperty %}
                                 <div class="col-md-3 mb-5">
                                     <div class="card  shadow-lg" style="width: 15rem;">
                                         <img class="card-img-top" src="{{ each.img }}" alt="Card image cap"
@@ -56,12 +56,12 @@
                                             <h5 class="card-title">{{ each.location }}</h5>
                                             <p class="card-text">{{ each.description }}</p>
                                             <p class="text-monospace text-sm text-danger">
-                                                <span>monthly rent: KES</span> {{ each.price }}
+                                                <span>monthly acquire: KES</span> {{ each.price }}
                                             </p>
                                             <!-- <a href="#" class="btn btn-primary">Place bid</a> -->
                                             <button class="btn btn-primary" data-toggle="modal" id="this"
                                                 data-target="#bid{{ each.id }}" onclick="cookiefy()">
-                                                book rental
+                                                book property
                                             </button>
                                         </div>
                                     </div>
@@ -82,9 +82,9 @@
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <form action="/rentals/book" method="POST">
+                                                <form action="/property/book" method="POST">
                                                     <div class="form-group">
-                                                        <label for="productname">rental id:</label>
+                                                        <label for="productname">property id:</label>
                                                         <input type="text" class="form-control" name="id" id="myid"
                                                             value="{{ each.id }}" />
                                                     </div>

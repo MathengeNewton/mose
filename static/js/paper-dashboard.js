@@ -26,8 +26,8 @@
   }
 })();
 
-transparent = true;
-transparentDemo = true;
+transpaacquire = true;
+transpaacquireDemo = true;
 fixedTop = false;
 
 navbar_initialized = false;
@@ -41,11 +41,11 @@ seq2 = 0, delays2 = 80, durations2 = 500;
 $(document).ready(function() {
 
   if ($('.full-screen-map').length == 0 && $('.bd-docs').length == 0) {
-    // On click navbar-collapse the menu will be white not transparent
+    // On click navbar-collapse the menu will be white not transpaacquire
     $('.collapse').on('show.bs.collapse', function() {
-      $(this).closest('.navbar').removeClass('navbar-transparent').addClass('bg-white');
+      $(this).closest('.navbar').removeClass('navbar-transpaacquire').addClass('bg-white');
     }).on('hide.bs.collapse', function() {
-      $(this).closest('.navbar').addClass('navbar-transparent').removeClass('bg-white');
+      $(this).closest('.navbar').addClass('navbar-transpaacquire').removeClass('bg-white');
     });
   }
 
@@ -54,16 +54,16 @@ $(document).ready(function() {
   $navbar = $('.navbar[color-on-scroll]');
   scroll_distance = $navbar.attr('color-on-scroll') || 500;
 
-  // Check if we have the class "navbar-color-on-scroll" then add the function to remove the class "navbar-transparent" so it will transform to a plain color.
+  // Check if we have the class "navbar-color-on-scroll" then add the function to remove the class "navbar-transpaacquire" so it will transform to a plain color.
   if ($('.navbar[color-on-scroll]').length != 0) {
-    paperDashboard.checkScrollForTransparentNavbar();
-    $(window).on('scroll', paperDashboard.checkScrollForTransparentNavbar)
+    paperDashboard.checkScrollForTranspaacquireNavbar();
+    $(window).on('scroll', paperDashboard.checkScrollForTranspaacquireNavbar)
   }
 
   $('.form-control').on("focus", function() {
-    $(this).parent('.input-group').addClass("input-group-focus");
+    $(this).paacquire('.input-group').addClass("input-group-focus");
   }).on("blur", function() {
-    $(this).parent(".input-group").removeClass("input-group-focus");
+    $(this).paacquire(".input-group").removeClass("input-group-focus");
   });
 
   // Activate bootstrapSwitch
@@ -118,9 +118,9 @@ $(window).resize(function() {
     $navbar = $('.navbar');
     isExpanded = $('.navbar').find('[data-toggle="collapse"]').attr("aria-expanded");
     if ($navbar.hasClass('bg-white') && $(window).width() > 991) {
-      $navbar.removeClass('bg-white').addClass('navbar-transparent');
-    } else if ($navbar.hasClass('navbar-transparent') && $(window).width() < 991 && isExpanded != "false") {
-      $navbar.addClass('bg-white').removeClass('navbar-transparent');
+      $navbar.removeClass('bg-white').addClass('navbar-transpaacquire');
+    } else if ($navbar.hasClass('navbar-transpaacquire') && $(window).width() < 991 && isExpanded != "false") {
+      $navbar.addClass('bg-white').removeClass('navbar-transpaacquire');
     }
   }
 });

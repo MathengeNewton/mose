@@ -101,7 +101,7 @@ class owners(db.Model):
         return cls.query.filter_by(email=email).first().id
 
 
-class rentals(db.Model):
+class property(db.Model):
     id = db.Column(db.Integer, nullable=False,
                    primary_key=True, autoincrement=True)
     img = db.Column(db.String(), nullable=False)
@@ -110,13 +110,13 @@ class rentals(db.Model):
     price = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(), nullable=False, default='vacant')
 
-    # insert rental
+    # insert property
 
     def insert_record(self):
         db.session.add(self)
         db.session.commit()
 
-    # fetch all rentals
+    # fetch all property
     @classmethod
     def fetch_all(cls):
         return cls.query.all()
@@ -126,41 +126,41 @@ class rentals(db.Model):
     def fetch_by_status_occupied(cls):
         return cls.query.filter_by(status=u'vacant')
 
-    # get rental by id
+    # get property by id
     @classmethod
-    def get_rental_by_id(cls, id):
+    def get_property_by_id(cls, id):
         return cls.query.filter_by(id=id)
 
     @classmethod
-    def get_rental_price(cls, id):
+    def get_property_price(cls, id):
         return cls.query.filter_by(id=id).first().price
     # update status
-        # update rental
+        # update property
 
     @classmethod
-    def update_rental_by_id(cls, id):
-        rental = cls.query.filter_by(id=id).first()
-        if rental:
-            status = rental.status            
+    def update_property_by_id(cls, id):
+        property = cls.query.filter_by(id=id).first()
+        if property:
+            status = property.status            
             if status == 'booked':
                 newstatus = 'vacant'
-                rental.status = newstatus
+                property.status = newstatus
                 db.session.commit()
                 return True
             else:
                 newstatus = 'booked'
-                rental.status = newstatus
+                property.status = newstatus
                 db.session.commit()
                 return True
         else:
             return False
 
-    # delete rental by id
+    # delete property by id
     @classmethod
     def delete_by_id(cls, id):
-        rental = cls.query.filter_by(id=id).first()
-        if rental:
-            rental.delete()
+        property = cls.query.filter_by(id=id).first()
+        if property:
+            property.delete()
             db.session.commit()
             return True
         else:
@@ -170,7 +170,7 @@ class rentals(db.Model):
 class bookings(db.Model):
     id = db.Column(db.Integer, nullable=False,
                    primary_key=True, autoincrement=True)
-    rental_id = db.Column(db.Integer)
+    property_id = db.Column(db.Integer)
     movein_date = db.Column(db.Date)
     customer_email = db.Column(db.String)
 
@@ -187,8 +187,8 @@ class bookings(db.Model):
 
     # fetch booking id
     @classmethod
-    def get_booking_id_by_rental_id(cls, id):
-        return cls.query.filter_by(rental_id=id).first().id
+    def get_booking_id_by_property_id(cls, id):
+        return cls.query.filter_by(property_id=id).first().id
 # clear rcords
     @classmethod
     def delete_all(cls):
@@ -221,7 +221,7 @@ class wallet(db.Model):
         db.session.commit()
 # view wallet
     @classmethod
-    def view_current_amount(cls, id):
+    def view_curacquire_amount(cls, id):
         return cls.query.filter_by(owner=id).first().amount
 # update wallet
     @classmethod
@@ -273,8 +273,8 @@ def upload_file(imageFile):
 @app.route('/main', methods=['POST', 'GET'])
 def main():
     if 'custemail' in session:
-        allrentals = rentals.fetch_by_status_occupied()
-        return render_template('dash.html', allrentals=allrentals)
+        allproperty = property.fetch_by_status_occupied()
+        return render_template('dash.html', allproperty=allproperty)
     else:
         return redirect(url_for('login'))
 
@@ -407,10 +407,10 @@ def wallet_create():
 @app.route('/wallet/balance', methods=['POST', 'GET'])
 def wallet_ballance():
     id = session['custid']
-    myamount = wallet.view_current_amount(id)
+    myamount = wallet.view_curacquire_amount(id)
     print(myamount)
-    rental = session['thisid']
-    pricetag = rentals.get_rental_price(rental)
+    property = session['thisid']
+    pricetag = property.get_property_price(property)
     if myamount >= pricetag:
         newbal = myamount - pricetag
         id = session['custid']
@@ -430,18 +430,18 @@ def finish():
 
 @app.route('/booked')
 def booked():
-    allrentals = rentals.fetch_by_status_occupied()
+    allproperty = property.fetch_by_status_occupied()
     flash('booking was made succesifully.', 'success')
-    return render_template('dash.html', allrentals=allrentals)
+    return render_template('dash.html', allproperty=allproperty)
 
 
 # no money in wallet
 @app.route('/wallet/broke', methods=['POST', 'GET'])
 def broke_wallet():
     id = session['thisid']
-    booking_id = bookings.get_booking_id_by_rental_id(id)
+    booking_id = bookings.get_booking_id_by_property_id(id)
     delete = bookings.delete_by_id(booking_id)
-    update_status = rentals.update_rental_by_id(id)
+    update_status = property.update_property_by_id(id)
     flash('You don not have enough funds.Please recharge and try again later', 'danger')
     return render_template('recharge.html')
 
@@ -451,8 +451,8 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/tenant/login', methods=['GET', 'POST'])
-def tenant_login():
+@app.route('/buyer/login', methods=['GET', 'POST'])
+def buyer_login():
     if request.method == 'POST':
         # try:
         email = request.form['email']
@@ -483,35 +483,35 @@ def admin():
     else:
         return redirect('/owner/login')
 
-# check booked rentals
-@app.route('/rentals/status', methods=['POST', 'GET'])
-def rental_status():
+# check booked property
+@app.route('/property/status', methods=['POST', 'GET'])
+def property_status():
     if 'email' in session:
         allr = bookings.fetch_all()
-        return render_template('rentalstatus.html', allr=allr)
+        return render_template('propertytatus.html', allr=allr)
     else:
         return redirect(url_for('owner_login'))
 
 
-@app.route('/rentals/status/clear')
+@app.route('/property/status/clear')
 def clear_status():
     if session:
         bookings.delete_all()
-        return redirect(url_for('rental_status'))
+        return redirect(url_for('property_status'))
     else:
         return redirect('/owner/login')
-# view rentals
-@app.route('/rentals/all', methods=['GET', 'POST'])
-def rentals_all():
+# view property
+@app.route('/property/all', methods=['GET', 'POST'])
+def property_all():
     if 'email' in session:
-        allr = rentals.fetch_all()
-        return render_template('allrentals.html', allr=allr)
+        allr = property.fetch_all()
+        return render_template('allproperty.html', allr=allr)
     else:
         return redirect(url_for('owner_login'))
 
-# landlord upload new rental is processed here
+# landlord upload new property is processed here
 @app.route('/home', methods=['GET', 'POST'])
-def upload_rental():
+def upload_property():
     if 'email' in session:
         if request.method == 'POST':
             print(session['email'])
@@ -519,7 +519,7 @@ def upload_rental():
             location = request.form['location']
             description = request.form['description']
             price = request.form['price']
-            x = rentals(img=image_url, location=location,
+            x = property(img=image_url, location=location,
                         description=description, price=price)
             x.insert_record()
 
@@ -531,20 +531,20 @@ def upload_rental():
 
     return render_template('admindash.html')
 
-# rental booking
-@app.route('/rentals/book', methods=['GET', 'POST'])
+# property booking
+@app.route('/property/book', methods=['GET', 'POST'])
 def bid():
     if 'custemail' in session:
         if request.method == 'POST':
-            rental_id = request.form['id']
+            property_id = request.form['id']
             email = session['custemail']
             mdate = request.form['date']
-            session['thisid'] = rental_id
-            b = bookings(rental_id=rental_id,
+            session['thisid'] = property_id
+            b = bookings(property_id=property_id,
                          customer_email=email, movein_date=mdate)
             b.insert_record()
             print('booking successfull')
-            up = rentals.update_rental_by_id(id=rental_id)
+            up = property.update_property_by_id(id=property_id)
             print('update succesiful')
             return redirect(url_for('check_out'))
         else:
@@ -554,23 +554,23 @@ def bid():
         return redirect(url_for('login'))
 
 
-@app.route('/rentals/checkout')
+@app.route('/property/checkout')
 def check_out():
     if 'custemail' in session:
         email = session['custemail']
         id = customers.get_customer_id(email)
         rid = session['thisid']
-        thisrental = rentals.get_rental_by_id(rid)
-        return render_template('checkout.html', thisrental=thisrental)
+        thisproperty = property.get_property_by_id(rid)
+        return render_template('checkout.html', thisproperty=thisproperty)
     else:
         return redirect(url_for('main'))
 
 @app.route('/wallet/status')
 def WalletStatus():
     id = session['custid']
-    CurrentAmount = wallet.view_current_amount(id)
+    CuracquireAmount = wallet.view_curacquire_amount(id)
     date = datetime.date.today()
-    return render_template('mywallet.html',amount = CurrentAmount,date = date)
+    return render_template('mywallet.html',amount = CuracquireAmount,date = date)
 
 
 # update wallet
@@ -588,9 +588,9 @@ def walletrecharge():
     id = session['custid']
     new = entry
     newentry = int(new)
-    Current = wallet.view_current_amount(id)
-    CurrentAmount = int(Current) 
-    newamount = newentry + CurrentAmount
+    Curacquire = wallet.view_curacquire_amount(id)
+    CuracquireAmount = int(Curacquire) 
+    newamount = newentry + CuracquireAmount
     update = wallet.update_wallet_by_id(id, newamount)
     return redirect(url_for('WalletStatus'))
 
@@ -599,39 +599,39 @@ def walletrecharge():
 def update_status(id):
     if request.method == 'POST':
         print(id)
-        up = rentals.update_rental_by_id(id=id)
+        up = property.update_property_by_id(id=id)
         if up:
             flash('update successful', 'success')
-            return redirect(url_for('rentals_all'))
+            return redirect(url_for('property_all'))
         else:
             flash('record not found', 'danger')
-            return redirect(url_for('rentals_all'))
+            return redirect(url_for('property_all'))
     else:
-        return redirect(url_for('rentals_all'))
+        return redirect(url_for('property_all'))
 
 # @app.route('/status/update/error-outcome')
 # def status_error():
-#     allr = rentals.fetch_all()
+#     allr = property.fetch_all()
 #     flash("An error occured","danger")
-#     return render_template('allrentals.html', allr=allr)
+#     return render_template('allproperty.html', allr=allr)
 
 # delete a product
 @app.route('/delete/<int:id>', methods=['POST'])
 def delete(id):
-    deleted = rentals.delete_by_id(id)
+    deleted = property.delete_by_id(id)
     if deleted:
         flash("Deleted Succesfully", 'success')
-        return redirect(url_for('rentals_all'))
+        return redirect(url_for('property_all'))
     else:
         flash("Record not found", 'danger')
-        return redirect(url_for('rentals_all'))
+        return redirect(url_for('property_all'))
 
 # @app.route('/reset')
-# def tenant_reset_password():
+# def buyer_reset_password():
 #     return render_template('reset.html')
 
-# @app.route('/tenanteset',methods=['POST'])
-# def tenant_reset():
+# @app.route('/buyereset',methods=['POST'])
+# def buyer_reset():
 #     return 'done'
 
 @app.route('/owner/reset')
