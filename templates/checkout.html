@@ -51,12 +51,18 @@
             display: inline;
             margin-right: 15%;
         }
+        .mycard{
+            display:inline-flex;
+        }
+        .mydetail{
+            margin-left:5%;
+        }
     </style>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">Online renting</a>
+        <a class="navbar-brand" href="#">JAMESONS PROPERTY MANAGEMENT SYSTEM</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -78,35 +84,51 @@
                         <div class="container">
                             <div class="row">
                                 <div id="checkout">
+                                    {% for each in thisrental %}
                                     <div id="pimage">
-                                        <img src="../static/img/apart.jpg" id="rimage">
+                                        <img src="{{each.img}}" id="rimage">
                                     </div>
                                     <div id="detail">
                                         <div id="header">
                                         </div>
                                         <div id="details">
-                                            {% for each in thisrental %}
-                                            <form action="/wallet/balance" method="POST">
-                                                <div class="form-group">
-                                                    <label for="productname"><strong>location</strong></label>
-                                                    <p>{{each.location}}</p>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="productname"><strong>description</strong></label>
-                                                    <p>{{each.description}}</p>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label><strong>Amount:</strong></label>
-                                                    <p>ksh. {{each.price }}</p>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label><strong>phone number:</strong></label>
-                                                    <p>+254 798954562</p>
+                                            <form action="/finish-booking/{{each.id}}" method="POST">
+                                                <div class="mycard">
+                                                    <div>                                            
+                                                        <div class="form-group">
+                                                            <label for="productname"><strong>Location</strong></label>
+                                                            <p>{{each.location}}</p>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="productname"><strong>Description</strong></label>
+                                                            <p>{{each.description}}</p>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label><strong>Property Price:</strong></label>
+                                                            <p>ksh. {{each.price }}</p>
+                                                        </div>
+                                                    </div>
+                                                     <div class="mydetail">     
+                                                        {% for owner in owners %}                                       
+                                                        <div class="form-group">
+                                                            <label for="productname"><strong>Owner</strong></label>
+                                                            <p>{{owner.name}}</p>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="productname"><strong>Owner email</strong></label>
+                                                            <p>{{owner.email}}</p>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label><strong>Owner phone:</strong></label>
+                                                            <p> {{owner.phone_number }}</p>
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
                                                 </div>
                                                 <div id="buttons">
                                                     <div class="form-group" id="btncheckout">
                                                         <button type="submit" class="btn btn-success btn-md">
-                                                            checkout
+                                                            confirm booking
                                                         </button>
                                                     </div>
                                                 </div>
