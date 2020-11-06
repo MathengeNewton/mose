@@ -50,8 +50,17 @@ def upload_file(imageFile):
 # customer landing page
 @app.route('/', methods=['POST', 'GET'])
 def main():
-    allrentals = rentals.fetch_by_status_occupied()
-    return render_template('dash.html', allrentals=allrentals)
+    return render_template('dash.html')
+
+@app.route('/rentals', methods=['POST', 'GET'])
+def rental_home():
+    allrentals = Property.fetch_by_status_occupied()
+    return render_template('rentals.html', allrentals=allrentals)
+
+@app.route('/property-for-sale', methods=['POST', 'GET'])
+def sales_home():
+    allrentals = Property.fetch_vacant_sales_property()
+    return render_template('sales.html', allrentals=allrentals)
 
 # log in page is initiated here
 @app.route('/gateway')
@@ -66,28 +75,32 @@ def owner_register():
 @app.route('/owner_reg', methods=['POST', 'GET'])
 def owner_reg():
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        phone = request.form['phone']
-        password = request.form['password']
-        confirmpass = request.form['confirmpass']
+        try:
+            name = request.form['name']
+            email = request.form['email']
+            phone = request.form['phone']
+            password = request.form['password']
+            confirmpass = request.form['confirmpass']        
+            if password != confirmpass:
+                flash('Passwords dont match', 'danger')
+                return redirect(url_for('owner_register'))
+            elif(Users.check_users_exists(email)):
+                flash('Email already in use', 'danger')
+                return redirect(url_for('owner_register'))
+            else:
+                hashpassword = bcrypt.generate_password_hash(
+                    password).decode('utf-8')
 
-        if password != confirmpass:
-            flash('Passwords dont match', 'danger')
+                y = Users(name=name, email=email,
+                        phone_number=phone, role = "owner",password=hashpassword)
+                y.insert_record()
+
+                flash('Account successfully created', 'success')
+                return redirect(url_for('owner_login'))
+        except Exception as e:
+            print(e)
+            flash('An error occured','danger')
             return redirect(url_for('owner_register'))
-        elif(owners.check_email_exist(email)):
-            flash('Email already in use', 'danger')
-            return redirect(url_for('owner_register'))
-        else:
-            hashpassword = bcrypt.generate_password_hash(
-                password).decode('utf-8')
-
-            y = owners(name=name, email=email,
-                       phone_number=phone, password=hashpassword)
-            y.insert_record()
-
-            flash('Account successfully created', 'success')
-            return redirect(url_for('owner_login'))
 
     return redirect(url_for('owner_register'))
 
@@ -98,17 +111,19 @@ def owner_login():
 
 
 @app.route('/owner/log_in', methods=['GET', 'POST'])
-def owners_login():
+def Owners_login():
     if request.method == 'POST':
         # try:
         email = request.form['email']
         password = request.form['password']
 
         # check if email exist
-        if owners.check_email_exist(email):
-            if owners.validate_password(email=email, password=password):
+        if Users.check_users_exists(email):
+            if Users.validate_password(email=email, password=password):                
                 session['email'] = email
-                session['uid'] = owners.get_owners_id(email)
+                session['uid'] = Users.get_user_id(email)
+                role = Users.get_user_role(session['uid'])
+                session['role'] = role
                 return redirect(url_for('admin'))
             else:
                 flash('Invalid login credentials', 'danger')
@@ -137,7 +152,7 @@ def cust_reg():
         if password != confirmpass:
             flash('Passwords dont match', 'danger')
             return redirect(url_for('registration'))
-        elif(customers.check_email_exist(email)):
+        elif(Users.check_users_exists(email)):
             flash('Email already in use', 'danger')
             return redirect(url_for('regisration'))
         else:
@@ -145,8 +160,8 @@ def cust_reg():
                 password).decode('utf-8')
             session['myemail'] = email
             session['phone'] = phone
-            y = customers(name=name, email=email,
-                          phone_number=phone, password=hashpassword)
+            y = Users(name=name, email=email,
+                          phone_number=phone,role = "customer", password=hashpassword)
             y.insert_record()
         return redirect(url_for('login'))
 
@@ -156,16 +171,15 @@ def cust_reg():
 
 
 
-# check wallet ballance
 @app.route('/finish-booking/<int:pid>', methods=['POST'])
 def finish_booking(pid):
     if 'custemail' in session:
         try:
             e = session['custemail']
             tnow = datetime.datetime.now()
-            createbooking = bookings(rental_id = pid,customer_email = e,booking_date = tnow)
+            createbooking = Bookings(rental_id = pid,customer_email = e,booking_date = tnow)
             createbooking.insert_record()
-            updaterental = rentals.update_rental_by_id(pid)
+            updaterental = Property.update_rental_by_id(pid)
             flash('Booking reservation made','success')
             return redirect(url_for('main'))
         except:
@@ -190,10 +204,12 @@ def tenant_login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        if customers.check_email_exist(email):
-            if customers.validate_password(email=email, password=password):
+        if Users.check_users_exists(email):
+            if Users.validate_password(email=email, password=password):
                 session['custemail'] = email
-                session['custid'] = customers.get_customer_id(email)
+                session['custid'] = Users.get_user_id(email)   
+                role = Users.get_user_role(session['custid'])
+                session['role'] = role
                 return redirect(url_for('main'))
             else:
                 flash('Invalid login credentials', 'danger')
@@ -207,8 +223,12 @@ def tenant_login():
 
 @app.route('/admin')
 def admin():
-    if 'email' in session:
-        return render_template('admindash.html')
+    if 'role' in session:
+        if session['role'] == "owner":
+            return render_template('admindash.html')
+        else:
+            flash('You are not clered to use this dashboard','danger')
+            return redirect(url_for('owner_login'))
     else:
         return redirect(url_for('owner_login'))
 
@@ -216,7 +236,7 @@ def admin():
 @app.route('/rentals/status', methods=['POST', 'GET'])
 def rental_status():
     if 'email' in session:
-        allr = bookings.fetch_all()
+        allr = Bookings.fetch_all()
         return render_template('rentalstatus.html', allr=allr)
     else:
         return redirect(url_for('owner_login'))
@@ -226,7 +246,7 @@ def rental_status():
 @app.route('/rentals/status/clear')
 def clear_status():
     if 'email' in session:
-        bookings.delete_all()
+        Bookings.delete_all()
         return redirect(url_for('rental_status'))
     else:
         return redirect(url_for('owner_login'))
@@ -236,7 +256,7 @@ def clear_status():
 @app.route('/rentals/all', methods=['GET', 'POST'])
 def rentals_all():
     if 'email' in session:
-        allr = rentals.fetch_all()
+        allr = Property.fetch_all()
         print(allr)
         return render_template('allrentals.html', allr=allr)
     else:
@@ -245,18 +265,18 @@ def rentals_all():
 @app.route('/view/bookings/<int:fid>')
 def view_booking(fid):
     if 'email' in session:
-        details = bookings.get_booking_by_id(fid)
+        details = Bookings.get_booking_by_id(fid)
         if details:
             mylist = []
             mydict = {'id':details.id}         
             rid = details.rental_id
-            rdets  = rentals.get_rental_by_id(rid)
+            rdets  = Property.get_rental_by_id(rid)
             mydict['image'] = rdets.img
             owner = rdets.owner
-            ownerdetails = owners.get_owner_by_id(owner)
+            ownerdetails = Users.get_user_by_id(owner)
             mydict['ownertel'] = ownerdetails.phone_number
             mydict['owner'] = ownerdetails.name
-            customerdets = customers.get_customer_by_email(details.customer_email)
+            customerdets = Users.get_user_by_email(details.customer_email)
             mydict['customer'] = customerdets.name
             mydict['customer_phone'] = customerdets.phone_number 
             mylist.append(mydict)
@@ -271,7 +291,7 @@ def view_booking(fid):
 @app.route('/rental-details/<int:rid>')
 def rental_details(rid):
     if 'email' in session:
-        rentaldets = rentals.get_rental_detail_by_id(rid)
+        rentaldets = Property.get_rental_detail_by_id(rid)
         return render_template('rentaldetail.html',allr = rentaldets)
     else:
         return redirect(url_for('owner_login'))
@@ -279,7 +299,7 @@ def rental_details(rid):
 @app.route('/update/<int:rid>')
 def rental_update_page(rid):
     if 'email' in session:
-        rentaldets = rentals.get_rental_detail_by_id(rid)
+        rentaldets = Property.get_rental_detail_by_id(rid)
         return render_template('rentalupdate.html',details = rentaldets)
     else:
         return redirect(url_for('owner_login'))
@@ -293,10 +313,10 @@ def update_rental_details(rid):
         description = request.form['description']
         price = request.form['price']
         status = request.form['status']
-        update = rentals.update_rental_details(rid,location,description,price,status)
-        rentaldets = rentals.get_rental_by_id(rid)
+        update = Property.update_rental_details(rid,location,description,price,status)
+        rentaldets = Property.get_rental_by_id(rid)
         if update:
-            rentaldets = rentals.get_rental_detail_by_id(rid)
+            rentaldets = Property.get_rental_detail_by_id(rid)
             flash('Update complete.','success')
             return render_template('rentaldetail.html',allr = rentaldets)
         else:
@@ -315,11 +335,13 @@ def upload_rental():
             image_url = upload_file(request.files)
             location = request.form['location']
             description = request.form['description']
+            category = request.form['category']
+            house_type = request.form['housetype']
             price = request.form['price']
-            ownerid = session['uid']           
-            x = rentals(img=image_url, location=location,
-                        description=description, price=price,owner = ownerid)
-            x.insert_record()
+            ownerid = session['uid']          
+            x = Property(img=image_url, location=location,
+                            description=description, price=price,owner = ownerid,house_type = house_type,category = category)
+            x.insert_record()       
 
             print('record successfully added')
 
@@ -335,12 +357,15 @@ def bid(pid):
     if 'custemail' in session:
         if request.method == 'POST':            
             email = session['custemail']   
-            id = customers.get_customer_id(email)
-            thisrental = rentals.get_rental_detail_by_id(pid)
-            ownerid = rentals.get_rental_owner_by_id(pid)
-            owner = owners.get_owner_details_by_id(ownerid)
+            id = Users.get_user_id(email)
+            thisrental = Property.get_rental_detail_by_id(pid)
+            for rental in thisrental:
+                price = rental.price
+                doubleprice = int(price) * 2
+            ownerid = Property.get_rental_owner_by_id(pid)
+            owner = Users.get_user_details_by_id(ownerid)
             print(owner)
-            return render_template('checkout.html', thisrental=thisrental,owners = owner)
+            return render_template('checkout.html', thisrental=thisrental,Owners = owner,doubleprice = doubleprice)
         else:
             return redirect(url_for('main'))
 
@@ -348,10 +373,30 @@ def bid(pid):
         return redirect(url_for('login'))
 
 
+
+@app.route('/purchase-book/<int:pid>', methods=['POST'])
+def purchase_book(pid):
+    if 'custemail' in session:
+        if request.method == 'POST':            
+            email = session['custemail']   
+            id = Users.get_user_id(email)
+            thisrental = Property.get_rental_detail_by_id(pid)
+            for rental in thisrental:
+                price = rental.price
+                halfprice = int(price) / 2
+            ownerid = Property.get_rental_owner_by_id(pid)
+            owner = Users.get_user_details_by_id(ownerid)
+            return render_template('purchase.html', thisrental=thisrental,Owners = owner,halfprice = halfprice)
+        else:
+            return redirect(url_for('main'))
+
+    else:
+        return redirect(url_for('login'))
+
 # delete a product
 @app.route('/delete/<int:id>', methods=['POST'])
 def delete(id):
-    deleted = rentals.delete_by_id(id)
+    deleted = Property.delete_by_id(id)
     if deleted:
         flash("Deleted Succesfully", 'success')
         return redirect(url_for('rentals_all'))

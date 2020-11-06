@@ -1,12 +1,13 @@
 from app import db,bcrypt
 
-
-class customers(db.Model):
+class Users(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, nullable=False,
                    primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
     phone_number = db.Column(db.String(30), nullable=False, unique=True)
+    role = db.Column(db.String(),nullable=False)
     password = db.Column(db.String(80), nullable=False)
 
     # insert new user class
@@ -17,90 +18,47 @@ class customers(db.Model):
 
     # check if email is in use
     @classmethod
-    def check_email_exist(cls, email):
+    def check_users_exists(cls, email):
         customer = cls.query.filter_by(email=email).first()
         if customer:
             return True
         else:
             return False
 
-    # validate password
     @classmethod
     def validate_password(cls, email, password):
-        customer = cls.query.filter_by(email=email).first()
-
-        if customer and bcrypt.check_password_hash(customer.password, password):
+        user = cls.query.filter_by(email=email).first()
+        if user and bcrypt.check_password_hash(user.password, password):
             return True
         else:
             return False
 
-    # get customer id
     @classmethod
-    def get_customer_id(cls, email):
+    def get_user_role(cls, id):
+        return cls.query.filter_by(id=id).first().role
+
+    @classmethod
+    def get_user_id(cls, email):
         return cls.query.filter_by(email=email).first().id
 
     @classmethod
-    def get_customer_by_email(cls, email):
+    def get_user_by_email(cls, email):
         return cls.query.filter_by(email=email).first()
 
-# db owner relation class
-
-
-class owners(db.Model):
-    id = db.Column(db.Integer, nullable=False,
-                   primary_key=True, autoincrement=True)
-    name = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50), nullable=False, unique=True)
-    phone_number = db.Column(db.String(30), nullable=False, unique=True)
-    password = db.Column(db.String(80), nullable=False)
-
-    # insert new user class
-
-    def insert_record(self):
-        db.session.add(self)
-        db.session.commit()
-
-    # check if email is in use
     @classmethod
-    def check_email_exist(cls, email):
-        owners = cls.query.filter_by(email=email).first()
-        if owners:
-            return True
-        else:
-            return False
-
-    # validate password
-    @classmethod
-    def validate_password(cls, email, password):
-        owners = cls.query.filter_by(email=email).first()
-
-        if owners and bcrypt.check_password_hash(owners.password, password):
-            return True
-        else:
-            return False
-
-    # get customer id
-    @classmethod
-    def get_owners_id(cls, email):
-        return cls.query.filter_by(email=email).first().id
-
-    @classmethod
-    def get_owner_by_id(cls, id):
-        return cls.query.filter_by(id = id).first()
-
-    @classmethod
-    def get_owner_details_by_id(cls, id):
+    def get_user_details_by_id(cls, id):
         return cls.query.filter_by(id = id)
 
-
-class rentals(db.Model):
+class Property(db.Model):
     id = db.Column(db.Integer, nullable=False,
                    primary_key=True, autoincrement=True)
     img = db.Column(db.String(), nullable=False)
     location = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(1000), nullable=False)
-    price = db.Column(db.String(20), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(), nullable=False, default='vacant')
+    category = db.Column(db.String(),nullable=False)
+    house_type = db.Column(db.String(),nullable=False)
     owner = db.Column(db.Integer,nullable = False)
 
     # insert rental
@@ -117,7 +75,11 @@ class rentals(db.Model):
     # fetch where status is 1
     @classmethod
     def fetch_by_status_occupied(cls):
-        return cls.query.filter_by(status=u'vacant')
+        return cls.query.filter_by(status=u'vacant').filter_by(category = "rental").all()
+    
+    @classmethod
+    def fetch_vacant_sales_property(cls):
+        return cls.query.filter_by(status='vacant').filter_by(category = "sale").all()
 
     # get rental by id
     @classmethod
@@ -188,7 +150,7 @@ class rentals(db.Model):
             return False
 
 
-class bookings(db.Model):
+class Bookings(db.Model):
     id = db.Column(db.Integer, nullable=False,
                    primary_key=True, autoincrement=True)
     rental_id = db.Column(db.Integer)
@@ -236,4 +198,49 @@ class bookings(db.Model):
             return True
         else:
             return False
+
+
+class Wallet(db.Model):
+    __tablename__='wallet'
+    id = db.Column(db.Integer, nullable=False,
+                   primary_key=True, autoincrement=True)
+    client_id = db.Column(db.Integer,unique = True)
+    balance = db.Column(db.Integer,default = 0)
+    date = db.Column(db.Date)
+
+    def insert_record(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def record_by_id(cls,id):
+        record = cls.query.filter_by(id = id).first()
+        return record
+
+    @classmethod
+    def get_record_by_client(cls,client):
+        record = cls.query.filter_by(client_id = client).first()
+        return record
+
+    @classmethod
+    def increase_balance_by_client_id(cls,id,additional_funds):
+        record = cls.query.filter_by(client_id = id).first()
+        if record:
+            record.balance = int(record.balance) + int(additional_funds)
+            db.session.commit()
+            return True
+        else:
+            return False
+
+    @classmethod
+    def reduce_balance_by_client_id(cls,id,additional_funds):
+        record = cls.query.filter_by(client_id = id).first()
+        if record:
+            record.balance = int(record.balance) - int(additional_funds)
+            db.session.commit()
+            return True
+        else:
+            return False
+
+    
 

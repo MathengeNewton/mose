@@ -64,12 +64,6 @@ The above copyright notice and this permission notice shall be included in all c
             </div>
             <div class="sidebar-wrapper">
                 <ul class="nav">
-                    <li>
-                        <a href="">
-                            <i class="nc-icon nc-bank"></i>
-                            <p>Dashboard</p>
-                        </a>
-                    </li>
                     <li class="">
                         <a href="/home">
                             <i class="fas fa-align-center"></i>
@@ -85,7 +79,7 @@ The above copyright notice and this permission notice shall be included in all c
                     <li class="">
                         <a href="/rentals/status">
                             <i class="fas fa-align-center"></i>
-                            <p>Booked Property List</p>
+                            <p>Bookings</p>
                         </a>
                     </li>
                 </ul>
@@ -158,7 +152,9 @@ The above copyright notice and this permission notice shall be included in all c
                                             <thead class="text-primary">
                                                 <th>#</th>
                                                 <th>location</th>
-                                                <th>Status</th>
+                                                <th>Category</th>
+                                                <th>Occupation status</th>
+                                                <th>House type</th>
                                                 <th>Details</th>
                                             </thead>
                                             <tbody>
@@ -166,37 +162,9 @@ The above copyright notice and this permission notice shall be included in all c
                                                 <tr>
                                                     <td>{{ each.id }}</td>
                                                     <td>{{ each.location }}</td>
+                                                    <td>{{ each.category }} property</td>
                                                     <td>{{ each.status }}</td>
-                                                    <!--<td>
-                                                        <button class="btn btn-sm btn-warning" data-toggle="modal"
-                                                            data-target="#update{{ each.id }}">update </button>
-                                                        <div class="modal fade" id="update{{ each.id }}" tabindex="-1"
-                                                            role="dialog" aria-labelledby="exampleModalLabel"
-                                                            aria-hidden="true">
-                                                            <div class="modal-dialog" role="document">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title" id="exampleModalLabel">
-                                                                            Update</h5>
-                                                                        <button type="button" class="close"
-                                                                            data-dismiss="modal" aria-label="Close">
-                                                                            <span aria-hidden="true">&times;</span>
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <form action="/status/update/{{ each.id }}"
-                                                                            method="POST">
-                                                                            <div class="form-group">
-                                                                                <button type="submit"
-                                                                                    class="btn btn-success btn-md">update</button>
-                                                                            </div>
-                                                                        </form>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>-->
+                                                    <td>{{ each.house_type }}</td>                                                    
                                                     <td>
                                                         <a href="/rental-details/{{ each.id }}">
                                                             <button class="btn btn-sm btn-danger">View</button>
